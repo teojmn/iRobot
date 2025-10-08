@@ -1,0 +1,5 @@
+opencv-python
+pyzbar
+gpiozero
+numpy
+# picamera2  # Ne pas installer sur macOS (linux-only). Installer sur Raspberry Pi depuis requirements-pi.txt

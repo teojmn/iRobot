@@ -1,0 +1,4 @@
+id_emprunt,mail,id_casier,date,heure,statut
+1,leane.barbier@epitech.digital,1,2025-10-08,10:54:53,TERMINE
+2,alexandre.courtet@epitech.digital,3,2025-10-08,10:54:58,TERMINE
+3,teo.jamin@epitech.digital,4,2025-10-08,10:55:02,TERMINE

@@ -285,9 +285,14 @@ def main():
                     handle_scan(data, lock)
                 else:
                     print("Payload non reconnu (attendu mail).")
+            # Ajout pour afficher la vidéo
+            cv2.imshow("Camera", frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
             time.sleep(0.1)
     finally:
         cap.release()
+        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

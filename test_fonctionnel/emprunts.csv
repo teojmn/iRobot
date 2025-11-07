@@ -1,0 +1,11 @@
+id_emprunt,mail,id_casier,date,heure,statut
+1,leane.barbier@epitech.digital,1,2025-10-08,10:54:53,TERMINE
+2,alexandre.courtet@epitech.digital,3,2025-10-08,10:54:58,TERMINE
+3,teo.jamin@epitech.digital,4,2025-10-08,10:55:02,TERMINE
+4,mailto:teo.jamin@epitech.digital,6,2025-10-17,23:48:39,TERMINE
+5,teo.jamin@epitech.digital,6,2025-10-17,23:49:49,TERMINE
+6,mailto:teo.jamin@epitech.digital,8,2025-10-17,23:50:35,TERMINE
+7,mailto:teo.jamin@epitech.digital,8,2025-10-17,23:55:53,TERMINE
+8,mailto:teo.jamin@epitech.digital,8,2025-10-17,23:57:50,TERMINE
+9,teo.jamin@epitech.digital,6,2025-10-18,00:01:37,TERMINE
+10,teo.jamin@epitech.digital,6,2025-10-18,00:04:51,TERMINE

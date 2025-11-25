@@ -1,7 +1,4 @@
-#Test n°2 SMTP avec Brevo
-#Ceci est un test simple d'envoi d'email via le serveur SMTP de Brevo avec un mail conçu en HTML/CSS avec une phrase aléatoire extraite d'un fichier CSV.
-#Ajout de la lecture du CSV emprunts pour l'envoi.
-
+#Server SMTP pour envoi d'email via Brevo avec contenu HTML/CSS et phrase aléatoire depuis CSV
 
 #Importations
 import smtplib

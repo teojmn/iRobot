@@ -19,8 +19,7 @@ import cv2
 import numpy as np
 
 _email_re = re.compile(r'^[A-Za-z0-9._%+\-]+@(?:epitech\.eu|epitech\.digital)$', re.IGNORECASE)
-_digits_re = re.compile(r'^14081420\d*$')
-
+_digits_re = re.compile(r'^13081410\d*$')
 class CameraHandler:
     """
     Capture vidéo + détection continue de QR codes (filtrés: email / digits).

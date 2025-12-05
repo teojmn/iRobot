@@ -56,7 +56,7 @@ class EmpruntManager:
 
 emprunt = EmpruntManager()
 
-print("=== Test 1: Créer un emprunt ===")
+"""print("=== Test 1: Créer un emprunt ===")
 result = emprunt.creer_emprunt("user1@example.com", 1, "2025-12-05 10:00:00")
 print(f"Emprunt créé: {result}")
 
@@ -77,4 +77,4 @@ result = emprunt.cloturer_emprunt("user3@example.com", "2025-12-05 14:00:00")
 print(f"Résultat clôture inexistante: {result}")
 
 print("\n=== État final du DataFrame ===")
-print(emprunt.df)
+print(emprunt.df)"""

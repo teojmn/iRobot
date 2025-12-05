@@ -1,6 +1,6 @@
 pandas
 pyserial
 numpy
-opencv-python
+opencv-python-headless
 pyzbar
 #Pi.GPIO

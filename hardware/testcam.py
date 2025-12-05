@@ -1,13 +1,22 @@
 import cv2
 from pyzbar.pyzbar import decode
+import time
 
 def read_qr_code():
     """Lit un QR code depuis la caméra."""
-    cap = cv2.VideoCapture(0)
-    
-    if not cap.isOpened():
-        print("Erreur: Impossible d'ouvrir la caméra")
+    # Essayer différents indices de caméra
+    for index in range(3):
+        cap = cv2.VideoCapture(index)
+        if cap.isOpened():
+            print(f"Caméra trouvée à l'index {index}")
+            break
+        cap.release()
+    else:
+        print("Erreur: Aucune caméra trouvée")
         return
+    
+    # Laisser le temps à la caméra de s'initialiser
+    time.sleep(2)
     
     print("Détection de QR code en cours (Ctrl+C pour quitter)...")
     
@@ -16,7 +25,8 @@ def read_qr_code():
             ret, frame = cap.read()
             if not ret:
                 print("Erreur de lecture de la frame")
-                break
+                time.sleep(0.5)
+                continue
             
             # Décoder les QR codes
             for obj in decode(frame):

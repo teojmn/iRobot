@@ -1,5 +1,0 @@
-pandas
-pyserial
-cv2
-numpy
-Pi.GPIO

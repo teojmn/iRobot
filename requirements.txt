@@ -1,0 +1,5 @@
+pandas
+pyserial
+numpy
+opencv-python
+#Pi.GPIO

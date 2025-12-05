@@ -1,1 +1,5 @@
-mail,id_casier,date,heure,statut
+mail,id_casier,timestamp,statut
+,,,
+,,,
+,,,
+,,,

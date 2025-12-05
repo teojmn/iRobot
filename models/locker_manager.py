@@ -53,16 +53,16 @@ class LockerManager:
             return True
         return False
     
-locker = LockerManager()
+"""locker = LockerManager()
 
-"""test_id = locker.get_premier_libre()
+test_id = locker.get_premier_libre()
 print(f"Premier casier libre: {test_id}")
 
 test_plein = locker.casier_plein(test_id)
 print(f"Casier {test_id} mis à PLEIN: {test_plein}")
 
 test_id = locker.get_premier_plein()
-print(f"Premier casier plein: {test_id}")"""
+print(f"Premier casier plein: {test_id}")
 
 test_vide = locker.casier_vide(1)
-print(f"Casier 1 mis à VIDE: {test_vide}")
+print(f"Casier 1 mis à VIDE: {test_vide}")"""

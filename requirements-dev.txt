@@ -1,4 +1,0 @@
-pandas
-pyserial
-opencv-python
-numpy

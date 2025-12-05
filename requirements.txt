@@ -2,4 +2,5 @@ pandas
 pyserial
 numpy
 opencv-python
+pyzbar
 #Pi.GPIO

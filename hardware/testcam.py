@@ -1,56 +1,54 @@
-#!/usr/bin/env python3
-"""
-Script de test pour vérifier la caméra et la lecture de QR codes.
-Affiche l'adresse e-mail lue depuis un QR code.
-"""
-import sys
-import os
+import cv2
+from pyzbar.pyzbar import decode
+import numpy as np
 
-# Ajouter le chemin du module camera_handler
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from camera_handler import CameraHandler
-
-def main():
-    print("=== Test de la caméra Raspberry Pi ===")
-    print("Démarrage de la caméra...")
+def read_qr_code():
+    """Lit un QR code depuis la caméra et affiche l'adresse email."""
     
-    cam = CameraHandler(
-        camera_index=0,
-        width=640,
-        height=480,
-        use_thread=True,
-        decode_interval=0.1
-    )
+    # Initialiser la caméra (0 pour la caméra par défaut)
+    cap = cv2.VideoCapture(0)
     
-    try:
-        cam.start()
-        print("Caméra démarrée avec succès!")
-        print("Présentez un QR code contenant une adresse e-mail (@epitech.eu ou @epitech.digital)...")
-        print("Appuyez sur Ctrl+C pour quitter.\n")
+    if not cap.isOpened():
+        print("Erreur: Impossible d'ouvrir la caméra")
+        return
+    
+    print("Appuyez sur 'q' pour quitter")
+    print("Positionnez le QR code devant la caméra...")
+    
+    while True:
+        # Capturer une frame
+        ret, frame = cap.read()
         
-        while True:
-            # Attendre la détection d'un QR code (timeout de 1 seconde)
-            qr_data = cam.wait_for_qr(timeout=1.0)
+        if not ret:
+            print("Erreur: Impossible de lire la frame")
+            break
+        
+        # Décoder les QR codes dans la frame
+        decoded_objects = decode(frame)
+        
+        for obj in decoded_objects:
+            # Extraire les données du QR code
+            data = obj.data.decode('utf-8')
+            print(f"\nQR Code détecté!")
+            print(f"Adresse email: {data}")
             
-            if qr_data:
-                for qr in qr_data:
-                    if qr['type'] == 'EMAIL':
-                        print(f"✓ Adresse e-mail détectée: {qr['data']}")
-                    elif qr['type'] == 'NUMERIC':
-                        print(f"  Code numérique détecté: {qr['data']}")
-                print()
+            # Dessiner un rectangle autour du QR code
+            points = obj.polygon
+            if len(points) == 4:
+                pts = [(point.x, point.y) for point in points]
+                pts = np.array(pts, dtype=np.int32)
+                cv2.polylines(frame, [pts], True, (0, 255, 0), 3)
+        
+        # Afficher la frame
+        cv2.imshow('Test Camera - QR Code Reader', frame)
+        
+        # Quitter avec 'q'
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
     
-    except KeyboardInterrupt:
-        print("\n\nArrêt du test...")
-    except Exception as e:
-        print(f"\nErreur: {e}")
-        return 1
-    finally:
-        cam.stop()
-        print("Caméra arrêtée.")
-    
-    return 0
+    # Libérer les ressources
+    cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    sys.exit(main())
+    read_qr_code()

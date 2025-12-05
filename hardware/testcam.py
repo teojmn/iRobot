@@ -9,25 +9,23 @@ def read_qr_code():
         print("Erreur: Impossible d'ouvrir la caméra")
         return
     
-    print("Positionnez le QR code devant la caméra (q pour quitter)...")
+    print("Détection de QR code en cours (Ctrl+C pour quitter)...")
     
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
-        
-        # Décoder les QR codes
-        for obj in decode(frame):
-            print(f"Email détecté: {obj.data.decode('utf-8')}")
-        
-        # Afficher la frame
-        cv2.imshow('Camera', frame)
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    
-    cap.release()
-    cv2.destroyAllWindows()
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("Erreur de lecture de la frame")
+                break
+            
+            # Décoder les QR codes
+            for obj in decode(frame):
+                print(f"Email détecté: {obj.data.decode('utf-8')}")
+                
+    except KeyboardInterrupt:
+        print("\nArrêt de la détection")
+    finally:
+        cap.release()
 
 if __name__ == "__main__":
     read_qr_code()

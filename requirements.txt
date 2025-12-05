@@ -4,3 +4,4 @@ numpy
 opencv-python-headless
 pyzbar
 #Pi.GPIO
+picamera2 #testcam2

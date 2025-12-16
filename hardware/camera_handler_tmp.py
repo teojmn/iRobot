@@ -4,77 +4,61 @@ import cv2
 import numpy as np
 
 def main():
-    print("Recherche des webcams disponibles...")
+    print("Recherche de la webcam USB...")
     
-    # Test de plusieurs indices de caméra
+    # Tester plusieurs indices de caméra
+    cap = None
     for i in range(5):
+        print(f"Essai de /dev/video{i}...")
         test_cap = cv2.VideoCapture(i)
         if test_cap.isOpened():
-            print(f"  - Webcam trouvée à l'index {i}")
-            test_cap.release()
+            ret, frame = test_cap.read()
+            if ret and frame is not None:
+                print(f"✓ Webcam trouvée sur /dev/video{i}")
+                cap = test_cap
+                break
+            else:
+                test_cap.release()
         else:
-            print(f"  - Pas de webcam à l'index {i}")
+            test_cap.release()
     
-    print("\nTentative d'ouverture de la webcam...")
-    
-    # Essayer différentes méthodes d'ouverture
-    # Méthode 1: index simple
-    cap = cv2.VideoCapture(0)
-    
-    if not cap.isOpened():
-        print("  Index 0 échoué, essai avec V4L2...")
-        # Méthode 2: forcer V4L2 sur Linux
-        cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-    
-    if not cap.isOpened():
-        print("  V4L2 échoué, essai index 1...")
-        # Méthode 3: essayer index 1
-        cap = cv2.VideoCapture(1)
-    
-    if not cap.isOpened():
-        print("\nErreur: Impossible d'ouvrir la webcam USB")
+    if cap is None:
+        print("\n" + "=" * 50)
+        print("Erreur: Impossible d'ouvrir la webcam USB")
         print("Vérifications à faire:")
-        print("  1. La webcam est-elle branchée? (lsusb)")
-        print("  2. Les périphériques vidéo existent-ils? (ls -l /dev/video*)")
-        print("  3. Avez-vous les permissions? (sudo usermod -a -G video $USER)")
-        print("  4. La webcam est-elle utilisée par un autre programme?")
+        print("  1. Vérifiez que la webcam est branchée: lsusb")
+        print("  2. Vérifiez les périphériques vidéo: ls -la /dev/video*")
+        print("  3. Vérifiez les permissions: sudo usermod -a -G video $USER")
+        print("  4. Essayez: sudo chmod 666 /dev/video0")
+        print("=" * 50)
         return
 
-    print("Webcam ouverte avec succès!")
-
-    # Configuration de la résolution avec gestion d'erreur
-    print("\nConfiguration de la résolution...")
+    # Configuration de la résolution
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+    
+    # Attendre que la caméra se stabilise
+    print("Initialisation de la caméra...")
+    time.sleep(2)
+    
+    # Vider le buffer initial
+    for _ in range(5):
+        cap.read()
     
     # Récupération de la résolution réelle
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    # Test de capture initiale
-    print("Test de capture initiale...")
-    for i in range(5):
-        ret, test_frame = cap.read()
-        if ret:
-            print(f"  - Test capture {i+1}/5: OK")
-            break
-        else:
-            print(f"  - Test capture {i+1}/5: Échec, nouvelle tentative...")
-            time.sleep(0.5)
-    
-    if not ret:
-        print("\nErreur: Impossible de capturer des images de la webcam")
-        cap.release()
-        return
-
     # Initialisation du détecteur de QR OpenCV
     qr_detector = cv2.QRCodeDetector()
 
-    print("\n" + "=" * 50)
+    print("=" * 50)
     print("Webcam USB lancée. Appuie sur Ctrl+C pour quitter.")
     print(f"Résolution: {width}x{height}")
     print(f"FPS: {fps}")
+    print(f"Backend: {cap.getBackendName()}")
     print("=" * 50)
 
     frame_count = 0
@@ -88,19 +72,20 @@ def main():
             # Récupération d'une frame
             ret, frame = cap.read()
             
-            if not ret:
+            if not ret or frame is None:
                 error_count += 1
-                print(f"\n[Frame {frame_count}] Erreur de capture! (erreur #{error_count})")
+                print(f"\n[Frame {frame_count}] Erreur de capture! (Erreur #{error_count})")
+                print(f"  - ret: {ret}")
+                print(f"  - frame is None: {frame is None}")
                 
                 if error_count > 10:
-                    print("Trop d'erreurs de capture consécutives, arrêt du programme")
+                    print("Trop d'erreurs consécutives, arrêt du programme")
                     break
                 
                 time.sleep(0.5)
                 continue
             
-            # Reset du compteur d'erreurs si capture réussie
-            error_count = 0
+            error_count = 0  # Reset du compteur d'erreurs si succès
             
             print(f"\n[Frame {frame_count}] Capture réussie")
             print(f"  - Shape: {frame.shape}")
@@ -147,11 +132,12 @@ def main():
         print("Arrêt du programme...")
         print(f"Total frames capturées: {frame_count}")
         print(f"Total tentatives de détection: {detection_attempts}")
-        print(f"Total erreurs de capture: {error_count}")
+        print(f"Total erreurs: {error_count}")
         print("=" * 50)
     finally:
         # Nettoyage
-        cap.release()
+        if cap is not None:
+            cap.release()
         print("Webcam fermée")
 
 if __name__ == "__main__":

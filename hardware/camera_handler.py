@@ -1,209 +1,78 @@
-"""
-camera_handler.py
-
-Handler léger pour capturer des images depuis une caméra et détecter des QR codes en continu.
-Version simplifiée: ne reconnaît que deux types de payloads dans le QR code :
- - adresse e-mail (type "EMAIL")
- - suite de chiffres (type "NUMERIC")
-
-Dépendances:
-- opencv-python (cv2)
-- numpy
-"""
-from typing import Callable, List, Optional, Tuple, Dict, Any
-import threading
 import time
-import re
 
 import cv2
 import numpy as np
+from picamera2 import Picamera2
 
-_email_re = re.compile(r'^[A-Za-z0-9._%+\-]+@(?:epitech\.eu|epitech\.digital)$', re.IGNORECASE)
-_digits_re = re.compile(r'^13081410\d*$')
-class CameraHandler:
-    """
-    Capture vidéo + détection continue de QR codes (filtrés: email / digits).
+def main():
+    # Initialisation Picamera2
+    picam2 = Picamera2()
 
-    Usage basique:
-        cam = CameraHandler(camera_index=0)
-        cam.start()
-        data = cam.wait_for_qr(timeout=5)  # bloque jusqu'à détection ou timeout
-        cam.stop()
-    """
-    def __init__(
-        self,
-        camera_index: int = 0,
-        width: int = 640,
-        height: int = 480,
-        fps: int = 30,
-        use_thread: bool = True,
-        decode_interval: float = 0.0,
-    ) -> None:
-        self.camera_index = camera_index
-        self.width = width
-        self.height = height
-        self.fps = fps
-        self.use_thread = use_thread
-        self.decode_interval = float(decode_interval)
+    # Configuration vidéo (résolution modérée pour accélérer le décodage)
+    video_config = picam2.create_video_configuration(
+        main={"size": (1280, 720)},  # tu peux baisser à (640, 480) si c’est lent
+        buffer_count=4
+    )
+    picam2.configure(video_config)
 
-        self._cap: Optional[cv2.VideoCapture] = None
-        self._thread: Optional[threading.Thread] = None
-        self._stop_event = threading.Event()
-        self._lock = threading.RLock()
+    # Démarrage de la caméra
+    picam2.start()
+    time.sleep(0.5)  # petit délai pour stabiliser exposition / focus
 
-        self._latest_frame: Optional[np.ndarray] = None
-        self._latest_qr: List[Dict[str, Any]] = []
-        self._callbacks: List[Callable[[List[Dict[str, Any]], np.ndarray], None]] = []
+    # Initialisation du détecteur de QR OpenCV
+    qr_detector = cv2.QRCodeDetector()
 
-        # Condition pour wait_for_qr
-        self._qr_condition = threading.Condition(self._lock)
+    print("Caméra lancée. Appuie sur 'q' dans la fenêtre pour quitter.")
 
-        # Simplifié: on utilise uniquement OpenCV QRCodeDetector
-        self._cv_detector = cv2.QRCodeDetector()
+    try:
+        while True:
+            # Récupération d'une frame sous forme de numpy array
+            # Par défaut Picamera2 renvoie un tableau en RGB
+            frame = picam2.capture_array()
 
-    # --- ouverture et fermeture ---
-    def start(self, reopen: bool = False) -> None:
-        with self._lock:
-            if self._cap is None or reopen:
-                self._cap = cv2.VideoCapture(self.camera_index, cv2.CAP_ANY)
-                self._cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
-                self._cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
-                self._cap.set(cv2.CAP_PROP_FPS, self.fps)
-            if not self._cap.isOpened():
-                raise RuntimeError(f"Impossible d'ouvrir la caméra index={self.camera_index}")
+            # OpenCV travaille en BGR -> conversion facultative pour cohérence,
+            # (QRCodeDetector marche généralement aussi sur RGB)
+            frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-            self._stop_event.clear()
-            if self.use_thread:
-                if self._thread is None or not self._thread.is_alive():
-                    self._thread = threading.Thread(target=self._capture_loop, daemon=True)
-                    self._thread.start()
+            # Détection + décodage du QR code
+            data, points, _ = qr_detector.detectAndDecode(frame_bgr)
 
-    def stop(self) -> None:
-        self._stop_event.set()
-        if self._thread is not None:
-            self._thread.join(timeout=1.0)
-        with self._lock:
-            if self._cap is not None:
-                try:
-                    self._cap.release()
-                except Exception:
-                    pass
-                self._cap = None
+            if points is not None and len(points) > 0:
+                # Dessiner le polygone autour du QR code
+                pts = points[0].astype(int)
+                for i in range(len(pts)):
+                    pt1 = tuple(pts[i])
+                    pt2 = tuple(pts[(i + 1) % len(pts)])
+                    cv2.line(frame_bgr, pt1, pt2, (255, 0, 255), 2)
 
-    def is_running(self) -> bool:
-        return not self._stop_event.is_set() and self._cap is not None and self._cap.isOpened()
+                # Si `data` n'est pas vide, on a décodé quelque chose
+                if data:
+                    print("data found:", data)
 
-    # --- lecture et callbacks ---
-    def register_callback(self, fn: Callable[[List[Dict[str, Any]], np.ndarray], None]) -> None:
-        with self._lock:
-            self._callbacks.append(fn)
+                    # Afficher le texte décodé au-dessus du QR
+                    x, y = pts[0]
+                    cv2.putText(
+                        frame_bgr,
+                        data,
+                        (x, y - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (0, 255, 0),
+                        2
+                    )
 
-    def unregister_callback(self, fn: Callable[[List[Dict[str, Any]], np.ndarray], None]) -> None:
-        with self._lock:
-            if fn in self._callbacks:
-                self._callbacks.remove(fn)
+            # Afficher le flux vidéo (facultatif)
+            cv2.imshow("QR code detector (Picamera2)", frame_bgr)
 
-    def read(self) -> Tuple[Optional[np.ndarray], List[Dict[str, Any]]]:
-        with self._lock:
-            frame = None if self._latest_frame is None else self._latest_frame.copy()
-            qr = list(self._latest_qr)
-        return frame, qr
+            # Sortie sur 'q'
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-    def wait_for_qr(self, timeout: Optional[float] = None) -> Optional[List[Dict[str, Any]]]:
-        end = None if timeout is None else (time.time() + timeout)
-        with self._qr_condition:
-            while True:
-                if self._latest_qr:
-                    return list(self._latest_qr)
-                now = time.time()
-                if end is not None and now >= end:
-                    return None
-                remaining = None if end is None else (end - now)
-                self._qr_condition.wait(timeout=remaining)
+    finally:
+        # Nettoyage
+        cv2.destroyAllWindows()
+        picam2.stop()
+        picam2.close()
 
-    # --- capture ---
-    def capture_once(self) -> None:
-        with self._lock:
-            if self._cap is None:
-                raise RuntimeError("Camera non ouverte. Appelez start().")
-        self._do_capture_cycle()
-
-    def _capture_loop(self) -> None:
-        while not self._stop_event.is_set():
-            cycle_start = time.time()
-            self._do_capture_cycle()
-            if self.decode_interval > 0:
-                elapsed = time.time() - cycle_start
-                to_sleep = max(0.0, self.decode_interval - elapsed)
-                if to_sleep > 0:
-                    time.sleep(to_sleep)
-
-    def _do_capture_cycle(self) -> None:
-        with self._lock:
-            if self._cap is None or not self._cap.isOpened():
-                return
-            ret, frame = self._cap.read()
-            if not ret or frame is None:
-                time.sleep(0.01)
-                return
-            self._latest_frame = frame
-
-        qr_list = self._decode_frame(frame)
-
-        with self._lock:
-            self._latest_qr = qr_list
-            if qr_list:
-                with self._qr_condition:
-                    self._qr_condition.notify_all()
-                for cb in list(self._callbacks):
-                    try:
-                        cb(qr_list, frame)
-                    except Exception:
-                        pass
-
-    # --- décodage QR (simplifié: email / numeric only) ---
-    def _decode_frame(self, frame: np.ndarray) -> List[Dict[str, Any]]:
-        qr_results: List[Dict[str, Any]] = []
-        try:
-            detector = self._cv_detector
-            # prefer detectAndDecodeMulti si disponible
-            if hasattr(detector, 'detectAndDecodeMulti'):
-                retval, decoded_info, points, _ = detector.detectAndDecodeMulti(frame)
-                if retval and decoded_info:
-                    for info, pts in zip(decoded_info, points):
-                        if not info:
-                            continue
-                        info = info.strip()
-                        typ = None
-                        if _email_re.match(info):
-                            typ = 'EMAIL'
-                        elif _digits_re.match(info):
-                            typ = 'NUMERIC'
-                        else:
-                            continue  # on ignore les autres contenus
-                        polygon = [{'x': float(p[0]), 'y': float(p[1])} for p in pts.reshape((-1, 2))]
-                        xs = pts[:, 0]; ys = pts[:, 1]
-                        rect = {'left': int(xs.min()), 'top': int(ys.min()), 'width': int(xs.max()-xs.min()), 'height': int(ys.max()-ys.min())}
-                        qr_results.append({'data': info, 'type': typ, 'rect': rect, 'polygon': polygon})
-                    return qr_results
-            # fallback single decode
-            data, pts, _ = detector.detectAndDecode(frame)
-            if data:
-                data = data.strip()
-                if _email_re.match(data):
-                    typ = 'EMAIL'
-                elif _digits_re.match(data):
-                    typ = 'NUMERIC'
-                else:
-                    return []
-                polygon = []
-                rect = {}
-                if pts is not None:
-                    pts = np.array(pts).reshape((-1, 2))
-                    polygon = [{'x': float(p[0]), 'y': float(p[1])} for p in pts]
-                    xs = pts[:, 0]; ys = pts[:, 1]
-                    rect = {'left': int(xs.min()), 'top': int(ys.min()), 'width': int(xs.max()-xs.min()), 'height': int(ys.max()-ys.min())}
-                qr_results.append({'data': data, 'type': typ, 'rect': rect, 'polygon': polygon})
-        except Exception:
-            pass
-        return qr_results
+if __name__ == "__main__":
+    main()

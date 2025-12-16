@@ -1,7 +1,7 @@
 pandas
 pyserial
 numpy
-opencv-python-headless
+opencv
 pyzbar
 #Pi.GPIO
 picamera2 #testcam2

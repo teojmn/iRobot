@@ -1,37 +1,51 @@
+#most importantly for this code to run is to import OpenCV
 import cv2
-import numpy as np
-from pyzbar.pyzbar import decode
-from picamera2 import Picamera2
-import time
 
-def read_qr_code_rpicam():
-    # ... (le code précédent est inchangé) ...
-    # L'important est d'utiliser Picamera2, qui est le bon outil si rpicam-hello fonctionne.
-    # ...
-    # Initialisation de Picamera2
-    picam2 = Picamera2()
-    config = picam2.create_preview_configuration(main={"size": (640, 480)})
-    picam2.configure(config)
-    picam2.start()
-    
-    time.sleep(1)
-    
-    # ... (boucle de détection) ...
-    try:
-        while True:
-            frame_bayer = picam2.capture_array()
-            frame_bgr = cv2.cvtColor(frame_bayer, cv2.COLOR_BAYER_BGGR2BGR)
-            gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
+# set up camera object called Cap which we will use to find OpenCV
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Erreur: Impossible d'ouvrir la caméra")
+    exit(1)
+
+# QR code detection Method
+detector = cv2.QRCodeDetector()
+
+print("Caméra initialisée. Scannez un QR code (Ctrl+C pour quitter)...")
+
+#This creates an Infinite loop to keep your camera searching for data at all times
+try:
+    while True:
+        
+        # Below is the method to get a image of the QR code
+        ret, img = cap.read()
+        
+        if not ret:
+            print("Erreur de lecture de frame")
+            continue
+        
+        # Below is the method to read the QR code by detetecting the bounding box coords and decoding the hidden QR data 
+        data, bbox, _ = detector.detectAndDecode(img)
+        
+        # This is how we get that Blue Box around our Data. This will draw one, and then Write the Data along with the top
+        if bbox is not None and data:
+            print(f"QR code détecté: {data}")
             
-            for obj in decode(gray):
-                data = obj.data.decode('utf-8')
-                print(f"QR Code détecté: {data}")
-                
-    except KeyboardInterrupt:
-        print("\nArrêt de la détection.")
-    finally:
-        picam2.stop()
-        cv2.destroyAllWindows()
+            # Logique métier ici
+            if data == 'red':
+                print("→ Action RED détectée")
+            elif data == 'green':
+                print("→ Action GREEN détectée")
+        
+        # Pas de cv2.imshow() pour compatibilité SSH
+        
+        # Quitter avec 'q' si en mode GUI
+        # if cv2.waitKey(1) == ord("q"):
+        #     break
 
-if __name__ == "__main__":
-    read_qr_code_rpicam()
+except KeyboardInterrupt:
+    print("\nArrêt de la détection")
+finally:
+    cap.release()
+    # cv2.destroyAllWindows()  # Inutile sans imshow
+    print("Caméra libérée")

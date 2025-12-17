@@ -12,9 +12,10 @@ except:
 
 try:
     while True:
-        for i in range(16):
-            ser.write(f"{i}\n".encode())
-            time.sleep(2)
+        for i in range(16): # Envoie les entiers de 0 à 15
+            print(f"Activation du canal : {i}")
+            ser.write(f"{i}\n".encode()) # Envoi en format texte + retour ligne
+            time.sleep(2) # Attend 2 secondes entre chaque envoi
 except KeyboardInterrupt:
     ser.close()
     print("\nProgramme arrêté.")

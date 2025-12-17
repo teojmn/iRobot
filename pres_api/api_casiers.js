@@ -9,6 +9,9 @@ for (let i = 1; i <= 15; i++) {
   casiers[i] = { status: 'fermé', lastOpened: null };
 }
 
+// File d'attente des casiers à ouvrir physiquement
+let casierQueue = [];
+
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   const path = parsedUrl.pathname;
@@ -33,18 +36,21 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // POST /casier/:id/ouvrir - Ouvrir un casier spécifique
+  // POST /casier/:id/ouvrir - Ouvrir un casier spécifique (logique + queue physique)
   const ouvrirMatch = path.match(/^\/casier\/(\d+)\/ouvrir$/);
   if (ouvrirMatch && method === 'POST') {
-    const casierId = parseInt(ouvrirMatch[1]);
+    const casierId = parseInt(ouvrirMatch[1], 10);
     
     if (casierId >= 1 && casierId <= 15) {
       casiers[casierId].status = 'ouvert';
       casiers[casierId].lastOpened = new Date().toISOString();
+
+      // Ajout dans la file d'attente pour ouverture physique par le Raspberry/Arduino
+      casierQueue.push(casierId);
       
       res.writeHead(200);
       res.end(JSON.stringify({
-        message: `Casier ${casierId} ouvert`,
+        message: `Casier ${casierId} ajouté pour ouverture`,
         casier: casiers[casierId]
       }));
       return;
@@ -58,7 +64,7 @@ const server = http.createServer((req, res) => {
   // GET /casier/:id - Obtenir l'état d'un casier
   const casierMatch = path.match(/^\/casier\/(\d+)$/);
   if (casierMatch && method === 'GET') {
-    const casierId = parseInt(casierMatch[1]);
+    const casierId = parseInt(casierMatch[1], 10);
     
     if (casierId >= 1 && casierId <= 15) {
       res.writeHead(200);
@@ -74,6 +80,19 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  // GET /next-casier - Prochain casier à ouvrir physiquement
+  if (path === '/next-casier' && method === 'GET') {
+    if (casierQueue.length > 0) {
+      const nextCasier = casierQueue.shift(); // retire le premier de la queue
+      res.writeHead(200);
+      res.end(JSON.stringify({ casierId: nextCasier }));
+    } else {
+      res.writeHead(204); // No Content
+      res.end();
+    }
+    return;
+  }
+
   // Route non trouvée
   res.writeHead(404);
   res.end(JSON.stringify({ error: 'Route non trouvée' }));
@@ -85,8 +104,10 @@ server.listen(PORT, () => {
   console.log('  GET  /casiers - Liste tous les casiers');
   console.log('  GET  /casier/:id - État d\'un casier (1-15)');
   console.log('  POST /casier/:id/ouvrir - Ouvrir un casier (1-15)');
+  console.log('  GET  /next-casier - Prochain casier à ouvrir physiquement');
   console.log('\nExemples:');
   console.log('  curl http://localhost:3000/casiers');
   console.log('  curl http://localhost:3000/casier/1');
   console.log('  curl -X POST http://localhost:3000/casier/1/ouvrir');
+  console.log('  curl http://localhost:3000/next-casier');
 });

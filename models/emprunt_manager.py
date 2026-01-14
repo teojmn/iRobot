@@ -53,28 +53,11 @@ class EmpruntManager:
         """Vérifie si l'utilisateur a un emprunt EN COURS"""
         mask = (self.df['mail'] == mail) & (self.df['statut'] == 'EN COURS')
         return mask.any()
-
-emprunt = EmpruntManager()
-
-"""print("=== Test 1: Créer un emprunt ===")
-result = emprunt.creer_emprunt("user1@example.com", 1, "2025-12-05 10:00:00")
-print(f"Emprunt créé: {result}")
-
-print("\n=== Test 2: Tentative de créer un second emprunt (devrait échouer) ===")
-result = emprunt.creer_emprunt("user1@example.com", 2, "2025-12-05 11:00:00")
-print(f"Second emprunt créé: {result}")
-
-print("\n=== Test 3: Clôturer l'emprunt ===")
-result = emprunt.cloturer_emprunt("user1@example.com", "2025-12-05 12:00:00")
-print(f"Emprunt clôturé: {result}")
-
-print("\n=== Test 4: Maintenant on peut créer un nouvel emprunt ===")
-result = emprunt.creer_emprunt("user1@example.com", 2, "2025-12-05 13:00:00")
-print(f"Nouvel emprunt créé: {result}")
-
-print("\n=== Test 5: Clôturer un emprunt inexistant ===")
-result = emprunt.cloturer_emprunt("user3@example.com", "2025-12-05 14:00:00")
-print(f"Résultat clôture inexistante: {result}")
-
-print("\n=== État final du DataFrame ===")
-print(emprunt.df)"""
+    
+    def get_casier_en_cours(self, mail):
+        """Retourne l'id_casier de l'emprunt EN COURS pour ce mail, sinon None"""
+        mask = (self.df['mail'] == mail) & (self.df['statut'] == 'EN COURS')
+        emprunts_en_cours = self.df[mask]
+        if not emprunts_en_cours.empty:
+            return int(emprunts_en_cours.iloc[-1]['id_casier'])
+        return None

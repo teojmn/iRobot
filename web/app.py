@@ -32,10 +32,8 @@ def read_state():
 
 def write_state(payload: dict):
     ensure_state_file()
-    tmp = STATE_FILE + ".tmp"
-    with open(tmp, "w") as f:
+    with open(STATE_FILE, "w") as f:
         json.dump(payload, f)
-    os.replace(tmp, STATE_FILE)
 
 def is_valid_email(email: str) -> bool:
     if not email:

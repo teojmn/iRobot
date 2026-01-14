@@ -3,5 +3,9 @@ pyserial
 numpy
 opencv
 pyzbar
-#Pi.GPIO
+Pi.GPIO
 picamera2 #testcam2
+flask
+spidev
+mfrc522
+RPI.GPIO

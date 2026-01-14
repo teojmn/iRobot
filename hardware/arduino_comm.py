@@ -43,6 +43,20 @@ def send_relay_command(channel):
             ser.close()
             print("Port série fermé.")
 
+class ArduinoComm:
+    def __init__(self):
+        self.serial_port = SERIAL_PORT
+        self.baud_rate = BAUD_RATE
+    
+    def envoyer_commande(self, id_casier, action):
+        """Envoie une commande à l'Arduino pour contrôler un casier"""
+        # Convertir l'ID du casier (1-15) en numéro de canal (0-14)
+        channel = id_casier - 1
+        
+        if action.upper() == "OUVRIR":
+            send_relay_command(channel)
+        else:
+            print(f"Action inconnue: {action}")
 
 if __name__ == "__main__":
     # Vérifie si le numéro de canal a été passé en argument

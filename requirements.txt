@@ -8,4 +8,5 @@ picamera2 #testcam2
 flask
 spidev
 mfrc522
-RPI.GPIO
+lgpio
+gpiozero

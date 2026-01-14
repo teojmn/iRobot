@@ -87,4 +87,4 @@ def status():
 
 if __name__ == "__main__":
     # Sur le réseau de l'école: écouter sur toutes les interfaces
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)

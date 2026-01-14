@@ -50,13 +50,19 @@ class ArduinoComm:
     
     def envoyer_commande(self, id_casier, action):
         """Envoie une commande à l'Arduino pour contrôler un casier"""
-        # Convertir l'ID du casier (1-15) en numéro de canal (0-14)
-        channel = id_casier - 1
-        
-        if action.upper() == "OUVRIR":
-            send_relay_command(channel)
-        else:
-            print(f"Action inconnue: {action}")
+        try:
+            # FORCE la conversion en entier pour être sûr du calcul
+            id_int = int(id_casier)
+            # Convertir l'ID du casier (1-15) en numéro de canal (0-14)
+            channel = id_int - 1
+            
+            if action.upper() == "OUVRIR":
+                print(f"DEBUG ARDUINO: Envoi Canal {channel} pour Casier {id_int}")
+                send_relay_command(channel)
+            else:
+                print(f"Action inconnue: {action}")
+        except ValueError:
+            print(f"Erreur: id_casier '{id_casier}' n'est pas un nombre valide.")
 
 if __name__ == "__main__":
     # Vérifie si le numéro de canal a été passé en argument

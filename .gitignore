@@ -1,2 +1,6 @@
-.venv
+env/
+.venv/
 data/
+start.sh
+stop.sh
+__pycache__/

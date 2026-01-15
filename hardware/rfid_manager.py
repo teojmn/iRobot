@@ -29,17 +29,19 @@ class RFIDManager:
         self.last_read_time = 0
 
     def read_uid_no_block(self):
-        """Tente de lire un UID sans bloquer le programme"""
+        """Tente de lire un UID sans bloquer, avec le format SimpleMFRC522"""
         (status, TagType) = self.reader.MFRC522_Request(self.reader.PICC_REQIDL)
         
         if status == self.reader.MI_OK:
             (status, uid_bytes) = self.reader.MFRC522_Anticoll()
             if status == self.reader.MI_OK:
-                # Convertit la liste [byte1, byte2, byte3, byte4, byte5] en un seul nombre
-                uid = 0
-                for i in range(len(uid_bytes)):
-                    uid = uid * 256 + uid_bytes[i]
-                return uid
+                # FORMULE EXACTE DE SIMPLEMFRC522 :
+                # On prend les 4 premiers octets et on les transforme en entier
+                n = 0
+                for i in range(0, 4):
+                    n = n << 8
+                    n = n | uid_bytes[i]
+                return n
         return None
 
     def get_pending_association(self):

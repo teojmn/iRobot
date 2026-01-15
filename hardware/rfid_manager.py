@@ -2,7 +2,8 @@ import time
 import json
 import os
 from datetime import datetime
-from mfrc522 import SimpleMFRC522
+from mfrc522 import MFRC522
+import RPi.GPIO as GPIO
 import sys
 
 # Ajout du chemin parent pour importer les modèles
@@ -15,7 +16,7 @@ from hardware.arduino_comm import ArduinoComm
 
 class RFIDManager:
     def __init__(self):
-        self.reader = SimpleMFRC522()
+        self.reader = MFRC522()
         self.user_mgr = UserManager()
         self.emprunt_mgr = EmpruntManager()
         self.locker_mgr = LockerManager()
@@ -23,6 +24,23 @@ class RFIDManager:
         
         self.state_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rfid_state.json')
         self.association_timeout = 20  # secondes pour passer la carte
+        
+        self.last_uid = None
+        self.last_read_time = 0
+
+    def read_uid_no_block(self):
+        """Tente de lire un UID sans bloquer le programme"""
+        (status, TagType) = self.reader.MFRC522_Request(self.reader.PICC_REQIDL)
+        
+        if status == self.reader.MI_OK:
+            (status, uid_bytes) = self.reader.MFRC522_Anticoll()
+            if status == self.reader.MI_OK:
+                # Convertit la liste [byte1, byte2, byte3, byte4, byte5] en un seul nombre
+                uid = 0
+                for i in range(len(uid_bytes)):
+                    uid = uid * 256 + uid_bytes[i]
+                return uid
+        return None
 
     def get_pending_association(self):
         """Vérifie si Flask a demandé une association dans le fichier JSON"""
@@ -102,49 +120,49 @@ class RFIDManager:
         print(f"✓ Casier {id_casier} attribué à {mail}")
 
     def run(self):
-        print("--- Système iRobot RFID prêt ---")
+        print("--- Système iRobot RFID prêt (Mode Réactif) ---")
         try:
             while True:
-                # A. Vérifier si on est en mode association
+                # 1. Vérifier le JSON à chaque tour de boucle (très rapide)
                 pending_mail = self.get_pending_association()
                 
-                if pending_mail:
-                    print(f"\n>>> MODE ASSOCIATION ACTIF pour : {pending_mail}")
-                    print("En attente d'une carte...")
-                    
-                    # Lecture bloquante courte pour l'association
-                    try:
-                        uid, text = self.reader.read()
-                        if uid:
-                            success = self.user_mgr.register_user(uid, pending_mail)
-                            if success:
-                                print(f"✓ Succès ! Carte {uid} associée à {pending_mail}")
-                            else:
-                                print("✗ Erreur : Carte ou Email déjà enregistré.")
-                            self.reset_state()
-                            time.sleep(2)
-                    except Exception as e:
-                        print(f"Erreur lecture RFID (association): {e}")
-                        self.reset_state()
-                else:
-                    # B. Mode Normal (Lecture bloquante avec timeout court)
-                    try:
-                        # On utilise read() avec un timeout implicite
-                        uid, text = self.reader.read()
-                        if uid:
-                            print(f"\n--- Carte détectée : {uid} ---")
-                            self.handle_normal_mode(uid)
-                            time.sleep(3)  # Anti-rebond pour éviter de lire 10 fois la carte
-                    except Exception as e:
-                        # Si pas de carte détectée, on continue la boucle
-                        pass
+                # 2. Tenter de détecter une carte (sans bloquer)
+                uid = self.read_uid_no_block()
                 
-                time.sleep(0.2)
+                if uid:
+                    # Anti-rebond : ignorer si c'est la même carte dans les 3 dernières secondes
+                    current_time = time.time()
+                    if uid == self.last_uid and (current_time - self.last_read_time) < 3:
+                        time.sleep(0.1)
+                        continue
+                    
+                    self.last_uid = uid
+                    self.last_read_time = current_time
+                    
+                    if pending_mail:
+                        # MODE ASSOCIATION
+                        print(f"\n>>> ASSOCIATION : Carte {uid} pour {pending_mail}")
+                        success = self.user_mgr.register_user(uid, pending_mail)
+                        if success:
+                            print(f"✓ Succès ! Carte {uid} associée à {pending_mail}")
+                        else:
+                            print("✗ Erreur : Carte ou Email déjà enregistré.")
+                        self.reset_state()
+                        time.sleep(2)
+                    else:
+                        # MODE NORMAL
+                        print(f"\n--- Carte détectée : {uid} ---")
+                        self.handle_normal_mode(uid)
+                        time.sleep(3)  # Anti-rebond supplémentaire
+                
+                # Petite pause pour ne pas saturer le CPU (10 vérifications/seconde)
+                time.sleep(0.1)
                 
         except KeyboardInterrupt:
             print("\n\nArrêt du système...")
         finally:
             print("Nettoyage GPIO...")
+            GPIO.cleanup()
 
 if __name__ == "__main__":
     manager = RFIDManager()

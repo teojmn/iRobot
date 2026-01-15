@@ -45,37 +45,41 @@ def is_valid_email(email: str) -> bool:
 def root():
     return redirect(url_for("register"))
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    ensure_state_file()
-
-    if request.method == "POST":
-        email = (request.form.get("email") or "").strip()
-
-        if not is_valid_email(email):
-            flash("Email invalide. Utilise uniquement @epitech.eu ou @epitech.digital.", "error")
-            return render_template("register.html", timeout=ASSOCIATION_TIMEOUT_SECONDS)
-
-        # Option : empêcher de lancer une association si une autre est déjà en cours
-        state = read_state()
-        if state.get("mode") == "ASSOCIATION":
-            # si association trop vieille -> on écrase
-            ts = state.get("timestamp", 0)
-            if time.time() - ts < ASSOCIATION_TIMEOUT_SECONDS:
-                flash("Une association est déjà en cours. Réessaie dans quelques secondes.", "error")
-                return render_template("register.html", timeout=ASSOCIATION_TIMEOUT_SECONDS)
-
-        write_state({
-            "mode": "ASSOCIATION",
-            "mail": email,
-            "timestamp": time.time(),
-            "expires_at": time.time() + ASSOCIATION_TIMEOUT_SECONDS,
-            "requested_at": datetime.now().isoformat(timespec="seconds"),
-        })
-
-        return render_template("wait_for_card.html", email=email, timeout=ASSOCIATION_TIMEOUT_SECONDS)
-
-    return render_template("register.html", timeout=ASSOCIATION_TIMEOUT_SECONDS)
+@app.route('/status')
+def check_status():
+    """Vérifie le statut de l'association en cours"""
+    state_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rfid_state.json')
+    
+    if not os.path.exists(state_file):
+        return jsonify({"status": "waiting"})
+    
+    try:
+        with open(state_file, 'r') as f:
+            data = json.load(f)
+        
+        mode = data.get('mode', 'NORMAL')
+        
+        if mode == 'SUCCESS':
+            return jsonify({
+                "status": "success",
+                "mail": data.get('mail'),
+                "uid": data.get('uid')
+            })
+        elif mode == 'ERROR':
+            return jsonify({
+                "status": "error",
+                "message": data.get('message', 'Erreur inconnue')
+            })
+        elif mode == 'ASSOCIATION':
+            # Vérifier le timeout
+            timestamp = data.get('timestamp', 0)
+            if time.time() - timestamp > 20:
+                return jsonify({"status": "timeout"})
+            return jsonify({"status": "waiting"})
+        else:
+            return jsonify({"status": "idle"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 
 @app.get("/status")
 def status():

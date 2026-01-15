@@ -145,11 +145,34 @@ class RFIDManager:
                         # MODE ASSOCIATION
                         print(f"\n>>> ASSOCIATION : Carte {uid} pour {pending_mail}")
                         success = self.user_mgr.register_user(uid, pending_mail)
+                        
                         if success:
                             print(f"✓ Succès ! Carte {uid} associée à {pending_mail}")
+                            # Écrire le succès dans le JSON pour que Flask le lise
+                            try:
+                                with open(self.state_file, 'w') as f:
+                                    json.dump({
+                                        "mode": "SUCCESS",
+                                        "mail": pending_mail,
+                                        "uid": uid,
+                                        "timestamp": time.time()
+                                    }, f)
+                            except Exception as e:
+                                print(f"Erreur écriture succès: {e}")
                         else:
                             print("✗ Erreur : Carte ou Email déjà enregistré.")
-                        self.reset_state()
+                            # Écrire l'échec dans le JSON
+                            try:
+                                with open(self.state_file, 'w') as f:
+                                    json.dump({
+                                        "mode": "ERROR",
+                                        "mail": pending_mail,
+                                        "message": "Carte ou email déjà enregistré",
+                                        "timestamp": time.time()
+                                    }, f)
+                            except Exception as e:
+                                print(f"Erreur écriture erreur: {e}")
+                        
                         time.sleep(2)
                     else:
                         # MODE NORMAL

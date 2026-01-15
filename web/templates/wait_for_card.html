@@ -1,86 +1,173 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Locker - Passe ta carte</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --card: #111a33;
-      --text: #eef2ff;
-      --muted: #aab3d6;
-      --accent: #4f7cff;
-      --border: rgba(255,255,255,.08);
-    }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% 0%, #182554 0%, var(--bg) 60%);
-      color: var(--text);
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
-    .card{
-      width: 100%;
-      max-width: 520px;
-      background: rgba(17,26,51,.88);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      backdrop-filter: blur(10px);
-      text-align: center;
-    }
-    h1 { margin: 0 0 10px; font-size: 20px; }
-    p { margin: 0 0 14px; color: var(--muted); line-height: 1.35; }
-    .timer {
-      font-size: 44px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin: 10px 0 12px;
-      color: #cfe0ff;
-    }
-    .small { font-size: 13px; color: rgba(170,179,214,.8); }
-    .btn {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      color: var(--text);
-      text-decoration: none;
-      background: rgba(255,255,255,.06);
-    }
-    code { background: rgba(255,255,255,.07); padding: 2px 6px; border-radius: 8px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Association en cours - iRobot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .email-display {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .countdown {
+            font-size: 48px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .instruction {
+            color: #666;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .success {
+            color: #28a745;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Passe ta carte sur le lecteur</h1>
-    <p>Email : <code>{{ email }}</code></p>
-    <div class="timer" id="timer">{{ timeout }}</div>
-    <p class="small">
-      Dès que la carte est lue, l’association sera enregistrée (côté Raspberry).
-      Si le délai expire, recommence l’opération.
-    </p>
-    <a class="btn" href="/register">Revenir</a>
-  </div>
+    <div class="container">
+        <div id="waiting-state">
+            <h1>🔄 Association en cours</h1>
+            <div class="email-display">{{ email }}</div>
+            <div class="spinner"></div>
+            <div class="countdown" id="countdown">20</div>
+            <p class="instruction">Veuillez passer votre carte RFID devant le lecteur</p>
+        </div>
 
-  <script>
-    let t = Number(document.getElementById("timer").textContent || "0");
-    const el = document.getElementById("timer");
-    const iv = setInterval(() => {
-      t -= 1;
-      if (t <= 0) {
-        el.textContent = "0";
-        clearInterval(iv);
-      } else {
-        el.textContent = String(t);
-      }
-    }, 1000);
-  </script>
+        <div id="success-state" class="hidden">
+            <h1>✅ Association réussie !</h1>
+            <div class="email-display">{{ email }}</div>
+            <p class="success">Votre carte a été enregistrée avec succès</p>
+            <a href="/register" class="btn">Retour à l'accueil</a>
+        </div>
+
+        <div id="error-state" class="hidden">
+            <h1>❌ Erreur</h1>
+            <div class="email-display">{{ email }}</div>
+            <p class="error" id="error-message">Une erreur est survenue</p>
+            <a href="/register" class="btn">Réessayer</a>
+        </div>
+
+        <div id="timeout-state" class="hidden">
+            <h1>⏱️ Temps écoulé</h1>
+            <div class="email-display">{{ email }}</div>
+            <p class="error">Le délai de 20 secondes est dépassé</p>
+            <a href="/register" class="btn">Réessayer</a>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 20;
+        const countdownEl = document.getElementById('countdown');
+        
+        // Compte à rebours
+        const countdownInterval = setInterval(() => {
+            timeLeft--;
+            countdownEl.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+
+        // Vérification du statut toutes les secondes
+        const statusInterval = setInterval(async () => {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    clearInterval(statusInterval);
+                    clearInterval(countdownInterval);
+                    document.getElementById('waiting-state').classList.add('hidden');
+                    document.getElementById('success-state').classList.remove('hidden');
+                } else if (data.status === 'error') {
+                    clearInterval(statusInterval);
+                    clearInterval(countdownInterval);
+                    document.getElementById('waiting-state').classList.add('hidden');
+                    document.getElementById('error-message').textContent = data.message || 'Carte ou email déjà enregistré';
+                    document.getElementById('error-state').classList.remove('hidden');
+                } else if (data.status === 'timeout') {
+                    clearInterval(statusInterval);
+                    clearInterval(countdownInterval);
+                    document.getElementById('waiting-state').classList.add('hidden');
+                    document.getElementById('timeout-state').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification du statut:', error);
+            }
+        }, 1000);
+    </script>
 </body>
 </html>

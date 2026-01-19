@@ -15,6 +15,6 @@ pkill -f "hardware/rfid_manager.py" 2>/dev/null || true
 
 # 4. Lancer le système
 echo "--- Lancement du système iRobot ---"
-source .venv/bin/activate
+source env/bin/activate
 # On lance le web en arrière-plan et le RFID au premier plan
 python web/app.py & python hardware/rfid_manager.py

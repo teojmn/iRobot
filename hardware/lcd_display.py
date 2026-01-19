@@ -3,7 +3,7 @@ import time
 
 lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2)
 
-def scroll_text(text, line=1, delay=0.5):
+def scroll_text(text, line=1, delay=0.1):
     # Ajoute des espaces pour créer l'effet de boucle
     padding = ' ' * 16
     text = padding + text + padding

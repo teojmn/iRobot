@@ -3,8 +3,8 @@ import time
 
 lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2)
 
-def scroll_text(text, line=1, delay=0.2):
-    padding = ' ' * 16
+def scroll_text(text, line=1, delay=0.15):
+    padding = ' ' * 20
     text = padding + text + padding
     
     for i in range(len(text) - 15):

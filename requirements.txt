@@ -10,3 +10,5 @@ spidev
 mfrc522
 lgpio
 gpiozero
+RPLCD
+smbus2

@@ -9,7 +9,7 @@ BAUD_RATE = 9600
 # Le numéro de canal maximal que l'Arduino accepte (0 à 14 pour les Relais 1 à 15)
 MAX_CHANNEL = 14
 
-def send_relay_command(channel):
+def send_relay_command(channel, lcd=None, casier_id=None):
     """Initialise la communication série et envoie le numéro de canal."""
     try:
         # 1. Vérification de la validité du canal
@@ -39,6 +39,9 @@ def send_relay_command(channel):
             response = ser.readline().decode('utf-8', errors='ignore').strip()
             if response:
                 print(f"Arduino -> {response}")
+                # Afficher sur LCD au moment de la confirmation Arduino
+                if lcd and casier_id:
+                    lcd.write_temporary(f"Casier {casier_id}", "ouvert", 3)
 
     except serial.SerialException as e:
         print(f"Erreur de communication série: {e}")
@@ -53,9 +56,10 @@ def send_relay_command(channel):
             print("Port série fermé.\n")
 
 class ArduinoComm:
-    def __init__(self):
+    def __init__(self, lcd=None):
         self.serial_port = SERIAL_PORT
         self.baud_rate = BAUD_RATE
+        self.lcd = lcd
     
     def envoyer_commande(self, id_casier, action):
         """Envoie une commande à l'Arduino pour contrôler un casier"""
@@ -68,7 +72,7 @@ class ArduinoComm:
             
             if action.upper() == "OUVRIR":
                 print(f"\n🔓 Ouverture du casier {id_int} (Canal Arduino: {channel})")
-                send_relay_command(channel)
+                send_relay_command(channel, self.lcd, id_int)
             else:
                 print(f"Action inconnue: {action}")
                 

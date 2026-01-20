@@ -21,8 +21,8 @@ class RFIDManager:
         self.user_mgr = UserManager()
         self.emprunt_mgr = EmpruntManager()
         self.locker_mgr = LockerManager()
-        self.arduino = ArduinoComm()
         self.lcd = LCDDisplay()
+        self.arduino = ArduinoComm(self.lcd)  # Passer l'objet LCD
         
         self.state_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rfid_state.json')
         self.association_timeout = 20  # secondes pour passer la carte
@@ -100,8 +100,7 @@ class RFIDManager:
                 return
             
             print(f"Ouverture du casier {id_casier}...")
-            self.lcd.write_temporary(f"Casier {id_casier}", "ouvert", 3)
-            self.arduino.envoyer_commande(id_casier, "OUVRIR")
+            self.arduino.envoyer_commande(id_casier, "OUVRIR")  # LCD géré dans arduino_comm
             self.emprunt_mgr.cloturer_emprunt(mail, now)
             
             # ✅ CORRECTION : Après un RENDU, le câble est déposé → casier devient PLEIN
@@ -120,8 +119,7 @@ class RFIDManager:
         
         id_casier = int(id_casier)
         print(f"Attribution du casier {id_casier}...")
-        self.lcd.write_temporary(f"Casier {id_casier}", "ouvert", 3)
-        self.arduino.envoyer_commande(id_casier, "OUVRIR")
+        self.arduino.envoyer_commande(id_casier, "OUVRIR")  # LCD géré dans arduino_comm
         
         ok = self.emprunt_mgr.creer_emprunt(mail, id_casier, now)
         if not ok:

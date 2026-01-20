@@ -41,7 +41,7 @@ def send_relay_command(channel, lcd=None, casier_id=None):
                 print(f"Arduino -> {response}")
                 # Afficher sur LCD au moment de la confirmation Arduino
                 if lcd and casier_id:
-                    lcd.write_temporary(f"Casier {casier_id}", "ouvert", 3)
+                    lcd.write_temporary(f"Casier {casier_id}", "ouvert", 5)
 
     except serial.SerialException as e:
         print(f"Erreur de communication série: {e}")

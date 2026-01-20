@@ -77,6 +77,9 @@ class RFIDManager:
 
     def handle_normal_mode(self, uid):
         """Logique d'emprunt/rendu classique"""
+        # Afficher "Calcul en cours" pendant le traitement
+        self.lcd.write("Calcul", "en cours...")
+        
         mail = self.user_mgr.get_mail_by_uid(uid)
         
         if not mail:
@@ -97,6 +100,7 @@ class RFIDManager:
             id_casier = self.emprunt_mgr.get_casier_en_cours(mail)
             if not id_casier:
                 print("Erreur: emprunt EN COURS mais id_casier introuvable")
+                self.lcd.start_alternating()
                 return
             
             print(f"Ouverture du casier {id_casier}...")
@@ -124,6 +128,7 @@ class RFIDManager:
         ok = self.emprunt_mgr.creer_emprunt(mail, id_casier, now)
         if not ok:
             print("Impossible de créer l'emprunt (déjà un emprunt en cours?)")
+            self.lcd.start_alternating()
             return
         
         # ✅ CORRECTION : Après un EMPRUNT, le câble est pris → casier devient VIDE

@@ -13,6 +13,7 @@ from models.user_manager import UserManager
 from models.emprunt_manager import EmpruntManager
 from models.locker_manager import LockerManager
 from hardware.arduino_comm import ArduinoComm
+from hardware.lcd_display import LCDDisplay
 
 class RFIDManager:
     def __init__(self):
@@ -21,12 +22,16 @@ class RFIDManager:
         self.emprunt_mgr = EmpruntManager()
         self.locker_mgr = LockerManager()
         self.arduino = ArduinoComm()
+        self.lcd = LCDDisplay()
         
         self.state_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rfid_state.json')
         self.association_timeout = 20  # secondes pour passer la carte
         
         self.last_uid = None
         self.last_read_time = 0
+        
+        # Afficher le message d'accueil
+        self.lcd.write("Scannez votre", "carte")
 
     def read_uid_no_block(self):
         """Tente de lire un UID sans bloquer, avec le format SimpleMFRC522"""
@@ -79,6 +84,9 @@ class RFIDManager:
         
         if not mail:
             print(f"ID {uid} inconnu. Veuillez scanner le QR Code sur le casier.")
+            self.lcd.write("Utilisateur", "inconnu")
+            time.sleep(3)
+            self.lcd.write("Scannez le", "QR code")
             return
 
         print(f"Utilisateur reconnu : {mail}")
@@ -95,6 +103,7 @@ class RFIDManager:
                 return
             
             print(f"Ouverture du casier {id_casier}...")
+            self.lcd.write_temporary(f"Casier {id_casier}", "ouvert", 3)
             self.arduino.envoyer_commande(id_casier, "OUVRIR")
             self.emprunt_mgr.cloturer_emprunt(mail, now)
             
@@ -109,10 +118,12 @@ class RFIDManager:
         id_casier = self.locker_mgr.get_premier_libre()
         if id_casier is None:
             print("Désolé, aucun casier n'est disponible.")
+            self.lcd.write_temporary("Aucun casier", "disponible", 3)
             return
         
         id_casier = int(id_casier)
         print(f"Attribution du casier {id_casier}...")
+        self.lcd.write_temporary(f"Casier {id_casier}", "ouvert", 3)
         self.arduino.envoyer_commande(id_casier, "OUVRIR")
         
         ok = self.emprunt_mgr.creer_emprunt(mail, id_casier, now)
@@ -130,6 +141,14 @@ class RFIDManager:
             while True:
                 # 1. Vérifier le JSON à chaque tour de boucle (très rapide)
                 pending_mail = self.get_pending_association()
+                
+                # Afficher le bon message selon le mode
+                if pending_mail and not hasattr(self, '_association_msg_shown'):
+                    self.lcd.write("Enregistrez", "votre carte")
+                    self._association_msg_shown = True
+                elif not pending_mail and hasattr(self, '_association_msg_shown'):
+                    self.lcd.write("Scannez votre", "carte")
+                    delattr(self, '_association_msg_shown')
                 
                 # 2. Tenter de détecter une carte (sans bloquer)
                 uid = self.read_uid_no_block()
@@ -151,6 +170,7 @@ class RFIDManager:
                         
                         if success:
                             print(f"✓ Succès ! Carte {uid} associée à {pending_mail}")
+                            self.lcd.write_temporary("Succes !", "", 3)
                             # Écrire le succès dans le JSON pour que Flask le lise
                             try:
                                 with open(self.state_file, 'w') as f:
@@ -164,6 +184,7 @@ class RFIDManager:
                                 print(f"Erreur écriture succès: {e}")
                         else:
                             print("✗ Erreur : Carte ou Email déjà enregistré.")
+                            self.lcd.write_temporary("Carte deja", "enregistree", 3)
                             # Écrire l'échec dans le JSON
                             try:
                                 with open(self.state_file, 'w') as f:
@@ -176,6 +197,7 @@ class RFIDManager:
                             except Exception as e:
                                 print(f"Erreur écriture erreur: {e}")
                         
+                        delattr(self, '_association_msg_shown')
                         time.sleep(2)
                     else:
                         # MODE NORMAL
@@ -190,6 +212,7 @@ class RFIDManager:
             print("\n\nArrêt du système...")
         finally:
             print("Nettoyage GPIO...")
+            self.lcd.clear()
             GPIO.cleanup()
 
 if __name__ == "__main__":

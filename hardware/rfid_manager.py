@@ -212,7 +212,7 @@ class RFIDManager:
             print("\n\nArrêt du système...")
         finally:
             print("Nettoyage GPIO...")
-            self.lcd.clear()
+            self.lcd.cleanup()
             GPIO.cleanup()
 
 if __name__ == "__main__":

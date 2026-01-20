@@ -11,7 +11,7 @@ class UserManager:
     def _load_users(self):
         try:
             if os.path.exists(self.csv_path):
-                self.df = pd.read_csv(self.csv_path)
+                self.df = pd.read_csv(self.csv_path, dtype={'uid': str})
             else:
                 self.df = pd.DataFrame(columns=['uid', 'mail', 'date_inscription'])
                 self.df.to_csv(self.csv_path, index=False)

@@ -77,8 +77,7 @@ class RFIDManager:
 
     def handle_normal_mode(self, uid):
         """Logique d'emprunt/rendu classique"""
-        # Afficher "Calcul en cours" pendant le traitement
-        self.lcd.write("Calcul", "en cours...")
+        self.lcd.write("Veuillez", "patienter...")
         
         mail = self.user_mgr.get_mail_by_uid(uid)
         

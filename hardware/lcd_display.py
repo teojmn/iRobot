@@ -38,7 +38,7 @@ class LCDDisplay:
             if self._default_mode:
                 self.lcd.clear()
                 self.lcd.cursor_pos = (0, 0)
-                self.lcd.write_string("Scannez votre".center(16))
+                self.lcd.write_string("Passez votre".center(16))
                 self.lcd.cursor_pos = (1, 0)
                 self.lcd.write_string("carte".center(16))
             else:
@@ -49,7 +49,7 @@ class LCDDisplay:
                 self.lcd.write_string("3000".center(16))
             
             self._default_mode = not self._default_mode
-            time.sleep(5)
+            time.sleep(3)
     
     def start_alternating(self):
         """Démarre l'alternance des messages par défaut"""

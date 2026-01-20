@@ -20,8 +20,8 @@ class UserManager:
             self.df = pd.DataFrame(columns=['uid', 'mail', 'date_inscription'])
 
     def get_mail_by_uid(self, uid):
-        """Retourne le mail associé à un UID ou None"""
-        user = self.df[self.df['uid'] == str(uid)]
+        uid = str(uid)
+        user = self.df[self.df['uid'] == uid]
         if not user.empty:
             return user.iloc[0]['mail']
         return None

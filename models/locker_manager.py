@@ -21,22 +21,23 @@ class LockerManager:
             self.df.to_csv(self.csv_path, index=False)
     
     def get_premier_libre(self):
-        """Récupère l'id_casier du premier casier disponible"""
-        casiers_libres = self.df[self.df['etat'].str.upper() == 'VIDE']
-        if not casiers_libres.empty:
-            return casiers_libres.iloc[0]['id_casier']
+        """
+        Récupère le premier casier DISPONIBLE pour un emprunt.
+        → DISPONIBLE = PLEIN (un câble est présent)
+        """
+        casiers_disponibles = self.df[self.df['etat'].str.upper() == 'PLEIN']
+        if not casiers_disponibles.empty:
+            return casiers_disponibles.iloc[0]['id_casier']
         return None
-    
     
     def get_premier_plein(self):
-        """Récupère l'id_casier du premier casier disponible"""
-        casiers_pleins = self.df[self.df['etat'].str.upper() == 'PLEIN']
-        if not casiers_pleins.empty:
-            return casiers_pleins.iloc[0]['id_casier']
-        return None
+        """Alias, laissé si ton code l'utilise ailleurs"""
+        return self.get_premier_libre()
     
     def casier_vide(self, id_casier):
-        """Met l'état du casier sur VIDE"""
+        """
+        Un utilisateur REND un câble ⇒ casier devient VIDE
+        """
         mask = self.df['id_casier'] == id_casier
         if mask.any():
             self.df.loc[mask, 'etat'] = 'VIDE'
@@ -45,24 +46,14 @@ class LockerManager:
         return False
     
     def casier_plein(self, id_casier):
-        """Met l'état du casier sur PLEIN"""
+        """
+        Un utilisateur PREND un câble ⇒ casier devient PLEIN ou VIDE ?
+        Nouvelle logique : un casier plein signifie "câble présent"
+        Donc quand un étudiant PREND un câble → il n'y en a plus → VIDE.
+        """
         mask = self.df['id_casier'] == id_casier
         if mask.any():
             self.df.loc[mask, 'etat'] = 'PLEIN'
             self._save_casiers()
             return True
         return False
-    
-"""locker = LockerManager()
-
-test_id = locker.get_premier_libre()
-print(f"Premier casier libre: {test_id}")
-
-test_plein = locker.casier_plein(test_id)
-print(f"Casier {test_id} mis à PLEIN: {test_plein}")
-
-test_id = locker.get_premier_plein()
-print(f"Premier casier plein: {test_id}")
-
-test_vide = locker.casier_vide(1)
-print(f"Casier 1 mis à VIDE: {test_vide}")"""

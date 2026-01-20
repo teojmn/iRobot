@@ -38,16 +38,17 @@ class LCDDisplay:
             if self._default_mode:
                 self.lcd.clear()
                 self.lcd.cursor_pos = (0, 0)
-                self.lcd.write_string("Passez votre".center(16))
-                self.lcd.cursor_pos = (1, 0)
-                self.lcd.write_string("carte".center(16))
-            else:
-                self.lcd.clear()
-                self.lcd.cursor_pos = (0, 0)
                 self.lcd.write_string("HDMI Locker".center(16))
                 self.lcd.cursor_pos = (1, 0)
                 self.lcd.write_string("3000".center(16))
-            
+                
+            else:
+                self.lcd.clear()
+                self.lcd.cursor_pos = (0, 0)
+                self.lcd.write_string("Passez votre".center(16))
+                self.lcd.cursor_pos = (1, 0)
+                self.lcd.write_string("carte".center(16))
+                
             self._default_mode = not self._default_mode
             time.sleep(3)
     

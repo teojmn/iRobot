@@ -29,9 +29,6 @@ class RFIDManager:
         
         self.last_uid = None
         self.last_read_time = 0
-        
-        # Afficher le message d'accueil
-        self.lcd.write("Scannez votre", "carte")
 
     def read_uid_no_block(self):
         """Tente de lire un UID sans bloquer, avec le format SimpleMFRC522"""
@@ -147,7 +144,7 @@ class RFIDManager:
                     self.lcd.write("Enregistrez", "votre carte")
                     self._association_msg_shown = True
                 elif not pending_mail and hasattr(self, '_association_msg_shown'):
-                    self.lcd.write("Scannez votre", "carte")
+                    self.lcd.start_alternating()
                     delattr(self, '_association_msg_shown')
                 
                 # 2. Tenter de détecter une carte (sans bloquer)

@@ -99,7 +99,7 @@
 <body>
     <div class="container">
         <div id="waiting-state">
-            <h1>🔄 Association en cours</h1>
+            <h1>Association en cours</h1>
             <div class="email-display">{{ email }}</div>
             <div class="spinner"></div>
             <div class="countdown" id="countdown">20</div>
@@ -107,21 +107,21 @@
         </div>
 
         <div id="success-state" class="hidden">
-            <h1>✅ Association réussie !</h1>
+            <h1>Association réussie !</h1>
             <div class="email-display">{{ email }}</div>
             <p class="success">Votre carte a été enregistrée avec succès</p>
             <a href="/register" class="btn">Retour à l'accueil</a>
         </div>
 
         <div id="error-state" class="hidden">
-            <h1>❌ Erreur</h1>
+            <h1>Erreur</h1>
             <div class="email-display">{{ email }}</div>
             <p class="error" id="error-message">Une erreur est survenue</p>
             <a href="/register" class="btn">Réessayer</a>
         </div>
 
         <div id="timeout-state" class="hidden">
-            <h1>⏱️ Temps écoulé</h1>
+            <h1>Temps écoulé</h1>
             <div class="email-display">{{ email }}</div>
             <p class="error">Le délai de 20 secondes est dépassé</p>
             <a href="/register" class="btn">Réessayer</a>

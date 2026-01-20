@@ -55,7 +55,16 @@ def register():
         return render_template("register.html", timeout=ASSOCIATION_TIMEOUT_SECONDS)
 
     # POST
-    email = (request.form.get("email") or "").strip().lower()
+    raw_email = (request.form.get("email") or "").strip().lower()
+    local = (request.form.get("local") or "").strip().lower()
+    domain = (request.form.get("domain") or "").strip().lower()
+
+    if raw_email:
+        email = raw_email
+    elif local and domain:
+        email = f"{local}@{domain}"
+    else:
+        email = ""
 
     if not is_valid_email(email):
         flash("Email invalide. Utilise @epitech.eu ou @epitech.digital", "error")

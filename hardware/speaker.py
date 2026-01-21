@@ -5,15 +5,34 @@ import os
 class Speaker:
     """Gère la lecture de sons via le haut-parleur USB"""
     
-    def __init__(self):
-        """Initialise pygame mixer pour la lecture audio"""
+    def __init__(self, volume=0.5):
+        """
+        Initialise pygame mixer pour la lecture audio
+        
+        Args:
+            volume: Volume de lecture (0.0 à 1.0, par défaut 0.5)
+        """
         try:
             pygame.mixer.init()
             self.initialized = True
+            self.set_volume(volume)
             print("✓ Haut-parleur initialisé")
         except Exception as e:
             print(f"⚠ Erreur d'initialisation du haut-parleur: {e}")
             self.initialized = False
+    
+    def set_volume(self, volume):
+        """
+        Ajuste le volume de lecture
+        
+        Args:
+            volume: Valeur entre 0.0 (muet) et 1.0 (volume max)
+        """
+        if self.initialized:
+            # Limiter le volume entre 0.0 et 1.0
+            volume = max(0.0, min(1.0, volume))
+            pygame.mixer.music.set_volume(volume)
+            print(f"🔊 Volume réglé à {int(volume * 100)}%")
     
     def play_sound(self, file_path, duration=None):
         """
@@ -63,14 +82,14 @@ class Speaker:
 if __name__ == "__main__":
     # Test du haut-parleur
     print("=== Test du haut-parleur ===")
-    speaker = Speaker()
+    speaker = Speaker(volume=0.3)  # Volume à 30%
     
     # Chemin vers le fichier test
-    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test.mp3")
+    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
     
     if os.path.exists(audio_path):
         print(f"Test avec: {audio_path}")
-        speaker.play_sound(audio_path, duration=4)
+        speaker.play_sound(audio_path, duration=2)
         print("✓ Test terminé")
     else:
         print(f"⚠ Fichier de test non trouvé: {audio_path}")

@@ -2,6 +2,7 @@ import serial
 import time
 import sys
 import os
+import threading
 from hardware.speaker import Speaker
 
 # --- Configuration du port série ---
@@ -11,7 +12,7 @@ BAUD_RATE = 9600
 # Le numéro de canal maximal que l'Arduino accepte (0 à 14 pour les Relais 1 à 15)
 MAX_CHANNEL = 14
 
-def send_relay_command(channel, lcd=None, casier_id=None):
+def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
     """Initialise la communication série et envoie le numéro de canal."""
     try:
         # 1. Vérification de la validité du canal
@@ -41,9 +42,16 @@ def send_relay_command(channel, lcd=None, casier_id=None):
             response = ser.readline().decode('utf-8', errors='ignore').strip()
             if response:
                 print(f"Arduino -> {response}")
-                # Afficher sur LCD au moment de la confirmation Arduino
+                
+                # Afficher sur LCD et jouer le son AU MOMENT où le relais s'active
                 if lcd and casier_id:
                     lcd.write_temporary(f"Casier {casier_id}", "ouvert", 4)
+                
+                # Jouer le son maintenant que la serrure est ouverte
+                if speaker:
+                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
+                    if os.path.exists(audio_path):
+                        threading.Thread(target=speaker.play_sound, args=(audio_path, 3), daemon=True).start()
 
     except serial.SerialException as e:
         print(f"Erreur de communication série: {e}")
@@ -75,16 +83,7 @@ class ArduinoComm:
             
             if action.upper() == "OUVRIR":
                 print(f"\n🔓 Ouverture du casier {id_int} (Canal Arduino: {channel})")
-                
-                # Jouer le son immédiatement (pendant l'initialisation Arduino)
-                if self.speaker:
-                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
-                    if os.path.exists(audio_path):
-                        # Utiliser threading pour ne pas bloquer
-                        import threading
-                        threading.Thread(target=self.speaker.play_sound, args=(audio_path, 4), daemon=True).start()
-                
-                send_relay_command(channel, self.lcd, id_int)
+                send_relay_command(channel, self.lcd, id_int, self.speaker)
             else:
                 print(f"Action inconnue: {action}")
                 

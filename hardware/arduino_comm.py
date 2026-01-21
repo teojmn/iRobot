@@ -11,7 +11,7 @@ BAUD_RATE = 9600
 # Le numéro de canal maximal que l'Arduino accepte (0 à 14 pour les Relais 1 à 15)
 MAX_CHANNEL = 14
 
-def send_relay_command(channel, lcd=None, casier_id=None):
+def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
     """Initialise la communication série et envoie le numéro de canal."""
     try:
         # 1. Vérification de la validité du canal
@@ -44,12 +44,12 @@ def send_relay_command(channel, lcd=None, casier_id=None):
                 # Afficher sur LCD au moment de la confirmation Arduino
                 if lcd and casier_id:
                     lcd.write_temporary(f"Casier {casier_id}", "ouvert", 4)
-                # Jouer le son d'ouverture
-                if lcd:  # On utilise lcd comme indicateur qu'on est dans le contexte complet
+                
+                # Jouer le son d'ouverture en même temps que l'affichage LCD
+                if speaker:
                     audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test.mp3")
-                    if hasattr(lcd, '__class__'):  # Vérifie qu'on a un objet lcd valide
-                        # Récupérer le speaker depuis l'instance parente si disponible
-                        pass  # Le speaker sera géré via self dans envoyer_commande
+                    if os.path.exists(audio_path):
+                        speaker.play_sound(audio_path, duration=4)
 
     except serial.SerialException as e:
         print(f"Erreur de communication série: {e}")
@@ -81,12 +81,7 @@ class ArduinoComm:
             
             if action.upper() == "OUVRIR":
                 print(f"\n🔓 Ouverture du casier {id_int} (Canal Arduino: {channel})")
-                send_relay_command(channel, self.lcd, id_int)
-                
-                # Jouer le son d'ouverture pendant 4 secondes
-                audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test.mp3")
-                if self.speaker and os.path.exists(audio_path):
-                    self.speaker.play_sound(audio_path, duration=4)
+                send_relay_command(channel, self.lcd, id_int, self.speaker)
             else:
                 print(f"Action inconnue: {action}")
                 

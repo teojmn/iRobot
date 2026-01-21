@@ -122,7 +122,7 @@ class RFIDManager:
         
         id_casier = int(id_casier)
         print(f"Attribution du casier {id_casier}...")
-        self.arduino.envoyer_commande(id_casier, "OUVRIR")  # LCD géré dans arduino_comm
+        self.arduino.envoyer_commande(id_casier, "OUVRIR")
         
         ok = self.emprunt_mgr.creer_emprunt(mail, id_casier, now)
         if not ok:

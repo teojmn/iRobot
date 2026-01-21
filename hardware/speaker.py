@@ -85,7 +85,7 @@ if __name__ == "__main__":
     speaker = Speaker(volume=0.3)  # Volume à 30%
     
     # Chemin vers le fichier test
-    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
+    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test.mp3")
     
     if os.path.exists(audio_path):
         print(f"Test avec: {audio_path}")

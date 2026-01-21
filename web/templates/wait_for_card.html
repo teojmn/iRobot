@@ -1,173 +1,265 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Association en cours - iRobot</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        .email-display {
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-size: 18px;
-            color: #667eea;
-            font-weight: bold;
-        }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin: 30px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .countdown {
-            font-size: 48px;
-            color: #667eea;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .instruction {
-            color: #666;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        .success {
-            color: #28a745;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .error {
-            color: #dc3545;
-            font-size: 18px;
-            margin: 20px 0;
-        }
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            margin-top: 20px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background: #5568d3;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Locker - Association en cours</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #111a33;
+      --text: #eef2ff;
+      --muted: #aab3d6;
+      --accent: #4f7cff;
+      --danger: #ff4f6d;
+      --ok: #28d17c;
+      --border: rgba(255,255,255,.08);
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #182554 0%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .wrap { width: 100%; max-width: 520px; }
+    .card {
+      background: rgba(17,26,51,.88);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+    h1 { margin: 0 0 6px; font-size: 20px; }
+    p { margin: 0 0 16px; color: var(--muted); line-height: 1.35; }
+    
+    .email-display {
+      background: rgba(79,124,255,.12);
+      border: 1px solid rgba(79,124,255,.3);
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+      font-size: 16px;
+      color: var(--accent);
+      font-weight: 600;
+      text-align: center;
+      word-break: break-all;
+    }
+    
+    .status-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+    }
+    
+    .spinner {
+      border: 3px solid rgba(79,124,255,.15);
+      border-top: 3px solid var(--accent);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 0.8s linear infinite;
+      margin: 10px 0;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .countdown {
+      font-size: 56px;
+      color: var(--accent);
+      font-weight: 700;
+      margin: 16px 0;
+      line-height: 1;
+    }
+    
+    .instruction {
+      color: var(--muted);
+      font-size: 15px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(40,209,124,.15);
+      border: 2px solid var(--ok);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: var(--ok);
+      margin: 10px 0;
+    }
+    
+    .error-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255,79,109,.15);
+      border: 2px solid var(--danger);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: var(--danger);
+      margin: 10px 0;
+    }
+    
+    .success-msg {
+      color: var(--ok);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      margin: 12px 0;
+    }
+    
+    .error-msg {
+      color: var(--danger);
+      font-size: 15px;
+      text-align: center;
+      margin: 12px 0;
+      line-height: 1.4;
+    }
+    
+    .btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), #7aa2ff);
+      color: #081024;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: transform 0.15s ease;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div id="waiting-state">
-            <h1>Association en cours</h1>
-            <div class="email-display">{{ email }}</div>
-            <div class="spinner"></div>
-            <div class="countdown" id="countdown">20</div>
-            <p class="instruction">Veuillez passer votre carte RFID devant le lecteur</p>
-        </div>
-
-        <div id="success-state" class="hidden">
-            <h1>Association réussie !</h1>
-            <div class="email-display">{{ email }}</div>
-            <p class="success">Votre carte a été enregistrée avec succès</p>
-            <a href="/register" class="btn">Retour à l'accueil</a>
-        </div>
-
-        <div id="error-state" class="hidden">
-            <h1>Erreur</h1>
-            <div class="email-display">{{ email }}</div>
-            <p class="error" id="error-message">Une erreur est survenue</p>
-            <a href="/register" class="btn">Réessayer</a>
-        </div>
-
-        <div id="timeout-state" class="hidden">
-            <h1>Temps écoulé</h1>
-            <div class="email-display">{{ email }}</div>
-            <p class="error">Le délai de 20 secondes est dépassé</p>
-            <a href="/register" class="btn">Réessayer</a>
-        </div>
-    </div>
-
-    <script>
-        let timeLeft = 20;
-        const countdownEl = document.getElementById('countdown');
+  <div class="wrap">
+    <div class="card">
+      <!-- État d'attente -->
+      <div id="waiting-state">
+        <h1>Association en cours</h1>
+        <p>Passe ta carte sur le lecteur maintenant.</p>
         
-        // Compte à rebours
-        const countdownInterval = setInterval(() => {
-            timeLeft--;
-            countdownEl.textContent = timeLeft;
-            if (timeLeft <= 0) {
-                clearInterval(countdownInterval);
-            }
-        }, 1000);
+        <div class="email-display">{{ email }}</div>
+        
+        <div class="status-content">
+          <div class="spinner"></div>
+          <div class="countdown" id="countdown">20</div>
+          <p class="instruction">Temps restant pour passer ta carte</p>
+        </div>
+      </div>
 
-        // Vérification du statut toutes les secondes
-        const statusInterval = setInterval(async () => {
-            try {
-                const response = await fetch('/status');
-                const data = await response.json();
+      <!-- État de succès -->
+      <div id="success-state" class="hidden">
+        <h1>Association réussie !</h1>
+        <p>Ta carte a été enregistrée avec succès.</p>
+        
+        <div class="email-display">{{ email }}</div>
+        
+        <div class="status-content">
+          <div class="success-icon">✓</div>
+          <p class="success-msg">Carte enregistrée</p>
+        </div>
+        
+        <a href="/register" class="btn">Retour à l'accueil</a>
+      </div>
 
-                if (data.status === 'success') {
-                    clearInterval(statusInterval);
-                    clearInterval(countdownInterval);
-                    document.getElementById('waiting-state').classList.add('hidden');
-                    document.getElementById('success-state').classList.remove('hidden');
-                } else if (data.status === 'error') {
-                    clearInterval(statusInterval);
-                    clearInterval(countdownInterval);
-                    document.getElementById('waiting-state').classList.add('hidden');
-                    document.getElementById('error-message').textContent = data.message || 'Carte ou email déjà enregistré';
-                    document.getElementById('error-state').classList.remove('hidden');
-                } else if (data.status === 'timeout') {
-                    clearInterval(statusInterval);
-                    clearInterval(countdownInterval);
-                    document.getElementById('waiting-state').classList.add('hidden');
-                    document.getElementById('timeout-state').classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Erreur lors de la vérification du statut:', error);
-            }
-        }, 1000);
-    </script>
+      <!-- État d'erreur -->
+      <div id="error-state" class="hidden">
+        <h1>Erreur</h1>
+        <p>Un problème est survenu lors de l'association.</p>
+        
+        <div class="email-display">{{ email }}</div>
+        
+        <div class="status-content">
+          <div class="error-icon">✕</div>
+          <p class="error-msg" id="error-message">Une erreur est survenue</p>
+        </div>
+        
+        <a href="/register" class="btn">Réessayer</a>
+      </div>
+
+      <!-- État de timeout -->
+      <div id="timeout-state" class="hidden">
+        <h1>Temps écoulé</h1>
+        <p>Le délai de 20 secondes est dépassé.</p>
+        
+        <div class="email-display">{{ email }}</div>
+        
+        <div class="status-content">
+          <div class="error-icon">⏱</div>
+          <p class="error-msg">Aucune carte détectée dans le temps imparti</p>
+        </div>
+        
+        <a href="/register" class="btn">Réessayer</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let timeLeft = 20;
+    const countdownEl = document.getElementById('countdown');
+    
+    // Compte à rebours
+    const countdownInterval = setInterval(() => {
+      timeLeft--;
+      countdownEl.textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
+
+    // Vérification du statut toutes les secondes
+    const statusInterval = setInterval(async () => {
+      try {
+        const response = await fetch('/status');
+        const data = await response.json();
+
+        if (data.status === 'success') {
+          clearInterval(statusInterval);
+          clearInterval(countdownInterval);
+          document.getElementById('waiting-state').classList.add('hidden');
+          document.getElementById('success-state').classList.remove('hidden');
+        } else if (data.status === 'error') {
+          clearInterval(statusInterval);
+          clearInterval(countdownInterval);
+          document.getElementById('waiting-state').classList.add('hidden');
+          document.getElementById('error-message').textContent = data.message || 'Carte ou email déjà enregistré';
+          document.getElementById('error-state').classList.remove('hidden');
+        } else if (data.status === 'timeout') {
+          clearInterval(statusInterval);
+          clearInterval(countdownInterval);
+          document.getElementById('waiting-state').classList.add('hidden');
+          document.getElementById('timeout-state').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification du statut:', error);
+      }
+    }, 1000);
+  </script>
 </body>
 </html>

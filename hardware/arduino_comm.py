@@ -31,6 +31,12 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
         
         print(f"Connexion établie sur {SERIAL_PORT}")
         print(f"Envoi : Canal {channel} -> Relais {channel + 1}")
+                
+        # Jouer le son maintenant que la serrure est ouverte
+        if speaker:
+            audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
+            if os.path.exists(audio_path):
+                threading.Thread(target=speaker.play_sound, args=(audio_path, 3), daemon=True).start()
 
         # 5. Envoi de la commande binaire (1 octet)
         ser.write(bytes([channel]))
@@ -46,12 +52,6 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
                 # Afficher sur LCD et jouer le son AU MOMENT où le relais s'active
                 if lcd and casier_id:
                     lcd.write_temporary(f"Casier {casier_id}", "ouvert", 4)
-                
-                # Jouer le son maintenant que la serrure est ouverte
-                if speaker:
-                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
-                    if os.path.exists(audio_path):
-                        threading.Thread(target=speaker.play_sound, args=(audio_path, 3), daemon=True).start()
 
     except serial.SerialException as e:
         print(f"Erreur de communication série: {e}")

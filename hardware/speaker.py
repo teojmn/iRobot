@@ -5,7 +5,7 @@ import os
 class Speaker:
     """Gère la lecture de sons via le haut-parleur USB"""
     
-    def __init__(self, volume=1.0):
+    def __init__(self, volume=0.5):
         """
         Initialise pygame mixer pour la lecture audio
         

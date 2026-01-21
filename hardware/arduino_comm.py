@@ -34,7 +34,7 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
                 
         # Jouer le son maintenant que la serrure est ouverte
         if speaker:
-            audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test.mp3")
+            audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
             if os.path.exists(audio_path):
                 threading.Thread(target=speaker.play_sound, args=(audio_path, 3), daemon=True).start()
 

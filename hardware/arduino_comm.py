@@ -11,7 +11,7 @@ BAUD_RATE = 9600
 # Le numéro de canal maximal que l'Arduino accepte (0 à 14 pour les Relais 1 à 15)
 MAX_CHANNEL = 14
 
-def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
+def send_relay_command(channel, lcd=None, casier_id=None):
     """Initialise la communication série et envoie le numéro de canal."""
     try:
         # 1. Vérification de la validité du canal
@@ -44,12 +44,6 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
                 # Afficher sur LCD au moment de la confirmation Arduino
                 if lcd and casier_id:
                     lcd.write_temporary(f"Casier {casier_id}", "ouvert", 4)
-                
-                # Jouer le son d'ouverture en même temps que l'affichage LCD
-                if speaker:
-                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
-                    if os.path.exists(audio_path):
-                        speaker.play_sound(audio_path, duration=4)
 
     except serial.SerialException as e:
         print(f"Erreur de communication série: {e}")
@@ -81,7 +75,16 @@ class ArduinoComm:
             
             if action.upper() == "OUVRIR":
                 print(f"\n🔓 Ouverture du casier {id_int} (Canal Arduino: {channel})")
-                send_relay_command(channel, self.lcd, id_int, self.speaker)
+                
+                # Jouer le son immédiatement (pendant l'initialisation Arduino)
+                if self.speaker:
+                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
+                    if os.path.exists(audio_path):
+                        # Utiliser threading pour ne pas bloquer
+                        import threading
+                        threading.Thread(target=self.speaker.play_sound, args=(audio_path, 4), daemon=True).start()
+                
+                send_relay_command(channel, self.lcd, id_int)
             else:
                 print(f"Action inconnue: {action}")
                 

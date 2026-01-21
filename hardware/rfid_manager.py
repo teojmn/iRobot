@@ -80,6 +80,7 @@ class RFIDManager:
         try:
             self.lcd.write("Veuillez", "patienter...")
         except OSError as e:
+            self.lcd.cursor_mode = 'hide'
             print(f"Erreur LCD: {e}")
         
         mail = self.user_mgr.get_mail_by_uid(uid)
@@ -91,6 +92,7 @@ class RFIDManager:
                 time.sleep(3)
                 self.lcd.write("Scannez le", "QR code")
             except OSError:
+                self.lcd.cursor_mode = 'hide'
                 pass
             return
 

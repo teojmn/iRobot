@@ -113,18 +113,12 @@
       {% endwith %}
 
       <form method="post" action="{{ url_for('register') }}">
-        <label for="local">Email Epitech</label>
-        <div class="field-group">
-          <input id="local" name="local" type="text"
-                 autocomplete="username"
-                 placeholder="prenom.nom"
-                 required
-                 pattern="[A-Za-z0-9._%+-]+" />
-          <select id="domain" name="domain" required>
-            <option value="epitech.eu">@epitech.eu</option>
-            <option value="epitech.digital">@epitech.digital</option>
-          </select>
-        </div>
+        <label for="email">Email Epitech</label>
+        <input id="email" name="email" type="text"
+               autocomplete="username"
+               placeholder="Rentre ton email Epitech"
+               required
+               pattern="[A-Za-z0-9._%+-]+@epitech\.(eu|digital)" />
         <button class="btn" type="submit">Associer ma carte</button>
       </form>
 

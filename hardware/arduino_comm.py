@@ -41,10 +41,15 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
             response = ser.readline().decode('utf-8', errors='ignore').strip()
             if response:
                 print(f"Arduino -> {response}")
-
                 # Afficher sur LCD au moment de la confirmation Arduino
                 if lcd and casier_id:
                     lcd.write_temporary(f"Casier {casier_id}", "ouvert", 4)
+                
+                # Jouer le son d'ouverture en même temps que l'affichage LCD
+                if speaker:
+                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
+                    if os.path.exists(audio_path):
+                        speaker.play_sound(audio_path, duration=4)
 
     except serial.SerialException as e:
         print(f"Erreur de communication série: {e}")
@@ -76,14 +81,7 @@ class ArduinoComm:
             
             if action.upper() == "OUVRIR":
                 print(f"\n🔓 Ouverture du casier {id_int} (Canal Arduino: {channel})")
-                
-                # Jouer le son d'ouverture
-                if self.speaker:
-                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test.mp3")
-                    if os.path.exists(audio_path):
-                        self.speaker.play_sound(audio_path, duration=4)
-                
-                send_relay_command(channel, self.lcd, id_int, None)  # Ne pas passer speaker ici
+                send_relay_command(channel, self.lcd, id_int, self.speaker)
             else:
                 print(f"Action inconnue: {action}")
                 

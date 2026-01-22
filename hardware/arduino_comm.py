@@ -75,7 +75,7 @@ class ArduinoComm:
         self.serial_port = SERIAL_PORT
         self.baud_rate = BAUD_RATE
         self.lcd = lcd
-        self.speaker = speaker or Speaker(volume=0.9)
+        self.speaker = speaker or Speaker(volume=1.0, system_volume=100)  # Volume max
     
     def envoyer_commande(self, id_casier, action):
         """Envoie une commande à l'Arduino pour contrôler un casier"""

@@ -13,7 +13,7 @@ class Speaker:
             volume: Volume de lecture (0.0 à 1.0, par défaut 0.5)
         """
         try:
-            pygame.mixer.init()
+            pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=4096)
             self.initialized = True
             self.set_volume(volume)
             print("✓ Haut-parleur initialisé")

@@ -42,6 +42,7 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
         ser.write(bytes([channel]))
         ser.flush()  # Force l'envoi immédiat
         
+        
         # 6. Lecture de la confirmation de l'Arduino (optionnel)
         time.sleep(0.3)
         while ser.in_waiting > 0:

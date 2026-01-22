@@ -33,10 +33,14 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
         print(f"Envoi : Canal {channel} -> Relais {channel + 1}")
                 
         # Jouer le son maintenant que la serrure est ouverte
-        if speaker:
-            audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
+        if speaker and casier_id:
+            # Construire le chemin du fichier audio spécifique au casier
+            audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", f"audio_{casier_id}.mp3")
             if os.path.exists(audio_path):
+                print(f"🔊 Lecture du son pour le casier {casier_id}")
                 threading.Thread(target=speaker.play_sound, args=(audio_path, 3), daemon=True).start()
+            else:
+                print(f"⚠ Fichier audio introuvable: {audio_path}")
 
         # 5. Envoi de la commande binaire (1 octet)
         ser.write(bytes([channel]))

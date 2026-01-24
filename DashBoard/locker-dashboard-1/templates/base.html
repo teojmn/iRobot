@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Locker Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Locker Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('casiers.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('casiers.compte') }}">Account</a></li>
+                <li><a href="{{ url_for('casiers.contact') }}">Contact</a></li>
+                <li><a href="{{ url_for('casiers.le_projet') }}">Le Projet</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; {{ current_year }} Locker Dashboard. All rights reserved.</p>
+    </footer>
+</body>
+</html>

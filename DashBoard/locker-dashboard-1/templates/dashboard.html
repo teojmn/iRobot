@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Dashboard</title>
+</head>
+<body>
+    {% include 'base.html' %}
+    <div class="container">
+        <h1>Dashboard</h1>
+        <div class="lockers-overview">
+            <h2>Lockers Overview</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for locker in lockers %}
+                    <tr>
+                        <td>{{ locker.id }}</td>
+                        <td>{{ locker.location }}</td>
+                        <td>{{ locker.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="loans-overview">
+            <h2>Loans Overview</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Locker ID</th>
+                        <th>User ID</th>
+                        <th>Date Borrowed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans %}
+                    <tr>
+                        <td>{{ loan.id }}</td>
+                        <td>{{ loan.locker_id }}</td>
+                        <td>{{ loan.user_id }}</td>
+                        <td>{{ loan.date_borrowed }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

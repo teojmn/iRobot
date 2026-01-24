@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Projet</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'base.html' %}
+    <div class="container">
+        <h1>Le Projet</h1>
+        <p>Bienvenue sur la page du projet. Voici quelques informations clés :</p>
+        <h2>Objectif du Projet</h2>
+        <p>Ce projet vise à fournir une solution de gestion des casiers et des emprunts.</p>
+        
+        <h2>Fonctionnalités</h2>
+        <ul>
+            <li>Gestion des casiers</li>
+            <li>Gestion des emprunts</li>
+            <li>Interface utilisateur intuitive</li>
+            <li>Support pour les utilisateurs</li>
+        </ul>
+
+        <h2>Technologies Utilisées</h2>
+        <p>Ce projet utilise Flask pour le backend et Vue.js pour le frontend.</p>
+
+        <h2>Contribuer</h2>
+        <p>Pour contribuer au projet, veuillez consulter le dépôt GitHub.</p>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

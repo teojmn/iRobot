@@ -1,60 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - iRobot Locker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Dashboard</title>
 </head>
 <body>
     {% include 'base.html' %}
+    
     <div class="container">
-        <h1>Dashboard</h1>
-        <div class="lockers-overview">
-            <h2>Lockers Overview</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for locker in lockers %}
-                    <tr>
-                        <td>{{ locker.id }}</td>
-                        <td>{{ locker.location }}</td>
-                        <td>{{ locker.status }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="page-header">
+            <h1>📊 Dashboard des Casiers</h1>
+            <p>Vue d'ensemble de votre système de gestion de casiers intelligents</p>
         </div>
-        <div class="loans-overview">
-            <h2>Loans Overview</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Locker ID</th>
-                        <th>User ID</th>
-                        <th>Date Borrowed</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for loan in loans %}
-                    <tr>
-                        <td>{{ loan.id }}</td>
-                        <td>{{ loan.locker_id }}</td>
-                        <td>{{ loan.user_id }}</td>
-                        <td>{{ loan.date_borrowed }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="total-casiers">0</h3>
+                <p>Total Casiers</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+                <h3 id="casiers-disponibles">0</h3>
+                <p>Disponibles</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #ec7063);">
+                <h3 id="casiers-occupes">0</h3>
+                <p>Occupés</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f39c12, #f5b041);">
+                <h3 id="casiers-maintenance">0</h3>
+                <p>Maintenance</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Liste des Casiers</h2>
+            <div class="table-container">
+                <table id="casiers-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Numéro</th>
+                            <th>Étage</th>
+                            <th>Statut</th>
+                            <th>Dernière Mise à Jour</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📝 Emprunts Récents</h2>
+            <div class="table-container">
+                <table id="emprunts-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Casier</th>
+                            <th>Utilisateur</th>
+                            <th>Date Début</th>
+                            <th>Date Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    {% include 'footer.html' %}
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

@@ -14,56 +14,22 @@
                 <h2>Formulaire de Contact</h2>
                 <form action="{{ url_for('casiers.contact') }}" method="post" class="contact-form">
                     <div class="form-group">
-                        <label for="name">👤 Nom</label>
+                        <label for="name">Nom</label>
                         <input type="text" id="name" name="name" placeholder="Votre nom complet" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">📧 Email</label>
+                        <label for="email">Email</label>
                         <input type="email" id="email" name="email" placeholder="votre.email@exemple.com" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="message">💬 Message</label>
+                        <label for="message">Message</label>
                         <textarea id="message" name="message" placeholder="Votre message..." required></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-success">📤 Envoyer le message</button>
+                    <button type="submit" class="btn btn-success">Envoyer le message</button>
                 </form>
-            </div>
-
-            <div class="card contact-info-card">
-                <h2>Informations</h2>
-                <div class="contact-info">
-                    <div class="info-item">
-                        <div class="icon">📍</div>
-                        <div>
-                            <h4>Adresse</h4>
-                            <p>Campus Universitaire<br>Département Informatique</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="icon">📧</div>
-                        <div>
-                            <h4>Email</h4>
-                            <p>support@irobot-locker.fr</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="icon">⏰</div>
-                        <div>
-                            <h4>Horaires</h4>
-                            <p>Lun - Ven : 8h00 - 18h00<br>Sam : 9h00 - 12h00</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="icon">🆘</div>
-                        <div>
-                            <h4>Support</h4>
-                            <p>Disponible 24/7 pour les urgences</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

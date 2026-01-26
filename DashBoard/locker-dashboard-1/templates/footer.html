@@ -1,27 +1,24 @@
-<footer>
+<footer class="footer">
     <div class="footer-content">
         <div class="footer-section">
-            <h3>🤖 iRobot Locker</h3>
-            <p>Système de gestion intelligente de casiers</p>
+            <h3>iRobot Locker</h3>
+            <p>Système de gestion intelligente de casiers pour Epitech</p>
         </div>
+        
         <div class="footer-section">
-            <h4>Navigation</h4>
-            <ul class="footer-links">
-                <li><a href="{{ url_for('casiers.dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('casiers.le_projet') }}">Le Projet</a></li>
-                <li><a href="{{ url_for('casiers.contact') }}">Contact</a></li>
-            </ul>
+            <h3>Liens rapides</h3>
+            <a href="{{ url_for('casiers.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('casiers.le_projet') }}">Le Projet</a>
+            <a href="{{ url_for('casiers.contact') }}">Contact</a>
         </div>
+        
         <div class="footer-section">
-            <h4>Support</h4>
-            <ul class="footer-links">
-                <li><a href="mailto:support@irobot-locker.fr">Email Support</a></li>
-                <li><a href="#">Documentation</a></li>
-                <li><a href="#">FAQ</a></li>
-            </ul>
+            <h3>Contact</h3>
+            <a href="https://github.com/teojmn/iRobot" target="_blank">GitHub</a>
         </div>
     </div>
+    
     <div class="footer-bottom">
-        <p>&copy; 2026 iRobot Locker Dashboard. Tous droits réservés.</p>
+        <p>&copy; 2026 iRobot Locker. Made by Téo Jasmin, Logan Lucmau, Léane Barbier and Viktor Sanson at Epitech Digital School</p>
     </div>
 </footer>

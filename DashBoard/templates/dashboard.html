@@ -11,16 +11,16 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <h3 id="total-casiers">0</h3>
-                <p>Total Casiers</p>
+                <div class="stat-label" style="color: white;">Total Casiers</div>
+                <div class="stat-number" id="total-casiers" style="color: white;">0</div>
             </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
-                <h3 id="casiers-disponibles">0</h3>
-                <p>Disponibles</p>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--ok), #27ae60);">
+                <div class="stat-label" style="color: white;">Casiers Disponibles</div>
+                <div class="stat-number" id="casiers-disponibles" style="color: white;">0</div>
             </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #ec7063);">
-                <h3 id="casiers-occupes">0</h3>
-                <p>Occupés</p>
+            <div class="stat-card" style="background: linear-gradient(135deg, var(--danger), #c0392b);">
+                <div class="stat-label" style="color: white;">Casiers Occupés</div>
+                <div class="stat-number" id="casiers-occupes" style="color: white;">0</div>
             </div>
         </div>
 
@@ -30,14 +30,16 @@
                 <table id="casiers-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Numéro</th>
-                            <th>Étage</th>
+                            <th>ID Casier</th>
+                            <th>État</th>
                             <th>Statut</th>
-                            <th>Dernière Mise à Jour</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: var(--muted);">Chargement...</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -51,11 +53,15 @@
                             <th>ID</th>
                             <th>Casier</th>
                             <th>Utilisateur</th>
-                            <th>Date Début</th>
-                            <th>Date Fin</th>
+                            <th>Date</th>
+                            <th>Statut</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--muted);">Chargement...</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>

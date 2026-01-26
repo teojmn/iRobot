@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - iRobot Locker{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>Dashboard des Casiers</h1>
+            <p>Vue d'ensemble de votre système de gestion de casiers intelligents</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="total-casiers">0</h3>
+                <p>Total Casiers</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+                <h3 id="casiers-disponibles">0</h3>
+                <p>Disponibles</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #ec7063);">
+                <h3 id="casiers-occupes">0</h3>
+                <p>Occupés</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f39c12, #f5b041);">
+                <h3 id="casiers-maintenance">0</h3>
+                <p>Maintenance</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Liste des Casiers</h2>
+            <div class="table-container">
+                <table id="casiers-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Numéro</th>
+                            <th>Étage</th>
+                            <th>Statut</th>
+                            <th>Dernière Mise à Jour</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Emprunts Récents</h2>
+            <div class="table-container">
+                <table id="emprunts-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Casier</th>
+                            <th>Utilisateur</th>
+                            <th>Date Début</th>
+                            <th>Date Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

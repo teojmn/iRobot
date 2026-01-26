@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Compte - iRobot Locker{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>Mon Compte</h1>
+            <p>Gérez vos informations personnelles et vos préférences</p>
+        </div>
+
+        <div class="card">
+            <h2>Informations du Profil</h2>
+            <form action="{{ url_for('casiers.update_account') }}" method="POST" class="account-form">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" placeholder="Entrez votre nom d'utilisateur" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="votre.email@exemple.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="Nouveau mot de passe (optionnel)">
+                    <small>Laissez vide si vous ne souhaitez pas changer votre mot de passe</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
+                    <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Statistiques de mon compte</h2>
+            <div class="stats-grid">
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <h3>0</h3>
+                    <p>Emprunts actifs</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                    <h3>0</h3>
+                    <p>Historique total</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

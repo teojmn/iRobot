@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Le Projet - iRobot Locker{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>Le Projet iRobot Locker</h1>
+            <p>Un système innovant de gestion de casiers intelligents pour Epitech</p>
+        </div>
+
+        <!-- Hero Card -->
+        <div class="hero-card">
+            <div class="hero-content">
+                <h2>Vision du Projet</h2>
+                <p>iRobot Locker révolutionne la gestion des casiers en combinant technologie RFID, intelligence embarquée et interface web moderne. Notre solution offre une expérience utilisateur fluide tout en garantissant sécurité et traçabilité.</p>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <h2 class="section-title">Fonctionnalités Principales</h2>
+        <div class="features-grid">
+            <div class="feature-card-modern">
+                <div class="feature-icon"></div>
+                <h3>Gestion Intelligente</h3>
+                <p>Système complet de gestion des casiers avec attribution automatique, suivi en temps réel et optimisation de l'occupation.</p>
+                <ul class="feature-list">
+                    <li>Attribution automatique</li>
+                    <li>Suivi temps réel</li>
+                    <li>Alertes automatiques</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon"></div>
+                <h3>Sécurité RFID</h3>
+                <p>Contrôle d'accès par carte étudiante Epitech avec authentification instantanée et journal d'accès complet.</p>
+                <ul class="feature-list">
+                    <li>Authentification sécurisée</li>
+                    <li>Journal d'accès</li>
+                    <li>Anti-intrusion</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon"></div>
+                <h3>Interface Web</h3>
+                <p>Dashboard moderne et responsive accessible depuis n'importe quel appareil pour gérer vos casiers et emprunts.</p>
+                <ul class="feature-list">
+                    <li>Design responsive</li>
+                    <li>Statistiques live</li>
+                    <li>Multi-plateforme</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon"></div>
+                <h3>Analytics</h3>
+                <p>Tableaux de bord analytiques avec métriques détaillées et rapports d'utilisation pour optimiser la gestion.</p>
+                <ul class="feature-list">
+                    <li>Métriques en temps réel</li>
+                    <li>Rapports d'usage</li>
+                    <li>Prédictions</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon"></div>
+                <h3>Maintenance</h3>
+                <p>Système de suivi de maintenance préventive avec alertes et planification automatique des interventions.</p>
+                <ul class="feature-list">
+                    <li>Maintenance préventive</li>
+                    <li>Alertes techniques</li>
+                    <li>Planning auto</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon"></div>
+                <h3>API Intégrée</h3>
+                <p>API RESTful pour intégration facile avec d'autres systèmes et possibilité d'extension du projet.</p>
+                <ul class="feature-list">
+                    <li>API REST complète</li>
+                    <li>Documentation</li>
+                    <li>Webhooks</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <h2 class="section-title">Stack Technique</h2>
+        <div class="tech-stack">
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon"></span>
+                    <h3>Backend</h3>
+                </div>
+                <div class="tech-items">
+                    <span class="tech-badge">Python 3.11</span>
+                    <span class="tech-badge">Flask</span>
+                    <span class="tech-badge">CSV Database</span>
+                    <span class="tech-badge">RESTful API</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon"></span>
+                    <h3>Frontend</h3>
+                </div>
+                <div class="tech-items">
+                    <span class="tech-badge">HTML5</span>
+                    <span class="tech-badge">CSS3</span>
+                    <span class="tech-badge">JavaScript</span>
+                    <span class="tech-badge">Responsive Design</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon"></span>
+                    <h3>Hardware</h3>
+                </div>
+                <div class="tech-items">
+                    <span class="tech-badge">Arduino</span>
+                    <span class="tech-badge">RFID RC522</span>
+                    <span class="tech-badge">LCD I2C</span>
+                    <span class="tech-badge">Servomoteurs</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon"></span>
+                    <h3>Outils</h3>
+                </div>
+                <div class="tech-items">
+                    <span class="tech-badge">Git</span>
+                    <span class="tech-badge">GitHub</span>
+                    <span class="tech-badge">VS Code</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="architecture-card">
+            <h2>Architecture du Système</h2>
+            <div class="architecture-content">
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon"></span>
+                        <h4>Couche Présentation</h4>
+                    </div>
+                    <p>Interface web responsive avec dashboard interactif</p>
+                </div>
+                
+                <div class="arch-arrow">↓</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon"></span>
+                        <h4>Couche Application</h4>
+                    </div>
+                    <p>API Flask avec logique métier et gestion des routes</p>
+                </div>
+                
+                <div class="arch-arrow">↓</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon"></span>
+                        <h4>Couche Données</h4>
+                    </div>
+                    <p>Stockage CSV avec modèles Casier et Emprunt</p>
+                </div>
+                
+                <div class="arch-arrow">↓</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon"></span>
+                        <h4>Couche Physique</h4>
+                    </div>
+                    <p>Arduino + RFID + LCD pour le contrôle matériel</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

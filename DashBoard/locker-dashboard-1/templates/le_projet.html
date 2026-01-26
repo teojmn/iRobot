@@ -5,78 +5,202 @@
 {% block content %}
     <div class="container">
         <div class="page-header">
-            <h1>📋 Le Projet iRobot Locker</h1>
-            <p>Un système innovant de gestion de casiers intelligents</p>
+            <h1>Le Projet iRobot Locker</h1>
+            <p>Un système innovant de gestion de casiers intelligents pour Epitech</p>
         </div>
 
-        <div class="card">
-            <h2>🎯 Objectif du Projet</h2>
-            <p>Ce projet vise à fournir une solution complète et moderne de gestion des casiers et des emprunts. Notre système intelligent permet une gestion efficace et automatisée de l'attribution, de la surveillance et de la maintenance des casiers.</p>
+        <!-- Hero Card -->
+        <div class="hero-card">
+            <div class="hero-content">
+                <h2>🎯 Vision du Projet</h2>
+                <p>iRobot Locker révolutionne la gestion des casiers en combinant technologie RFID, intelligence embarquée et interface web moderne. Notre solution offre une expérience utilisateur fluide tout en garantissant sécurité et traçabilité.</p>
+            </div>
         </div>
 
-        <div class="project-content">
-            <div class="feature-card">
-                <div class="icon">🗄️</div>
-                <h3>Gestion des Casiers</h3>
-                <p>Système complet de gestion des casiers avec suivi en temps réel de leur statut et disponibilité.</p>
+        <!-- Features Grid -->
+        <h2 class="section-title">✨ Fonctionnalités Principales</h2>
+        <div class="features-grid">
+            <div class="feature-card-modern">
+                <div class="feature-icon">🗄️</div>
+                <h3>Gestion Intelligente</h3>
+                <p>Système complet de gestion des casiers avec attribution automatique, suivi en temps réel et optimisation de l'occupation.</p>
+                <ul class="feature-list">
+                    <li>Attribution automatique</li>
+                    <li>Suivi temps réel</li>
+                    <li>Alertes automatiques</li>
+                </ul>
             </div>
             
-            <div class="feature-card">
-                <div class="icon">📝</div>
-                <h3>Gestion des Emprunts</h3>
-                <p>Suivi détaillé des emprunts avec historique complet et notifications automatiques.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="icon">🎨</div>
-                <h3>Interface Intuitive</h3>
-                <p>Interface utilisateur moderne et responsive, facile à utiliser sur tous les appareils.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="icon">🔒</div>
+            <div class="feature-card-modern">
+                <div class="feature-icon">🔒</div>
                 <h3>Sécurité RFID</h3>
-                <p>Système de contrôle d'accès par carte RFID pour une sécurité optimale.</p>
+                <p>Contrôle d'accès par carte étudiante Epitech avec authentification instantanée et journal d'accès complet.</p>
+                <ul class="feature-list">
+                    <li>Authentification sécurisée</li>
+                    <li>Journal d'accès</li>
+                    <li>Anti-intrusion</li>
+                </ul>
             </div>
             
-            <div class="feature-card">
-                <div class="icon">📊</div>
-                <h3>Statistiques</h3>
-                <p>Tableau de bord avec statistiques en temps réel et rapports détaillés.</p>
+            <div class="feature-card-modern">
+                <div class="feature-icon">📱</div>
+                <h3>Interface Web</h3>
+                <p>Dashboard moderne et responsive accessible depuis n'importe quel appareil pour gérer vos casiers et emprunts.</p>
+                <ul class="feature-list">
+                    <li>Design responsive</li>
+                    <li>Statistiques live</li>
+                    <li>Multi-plateforme</li>
+                </ul>
             </div>
             
-            <div class="feature-card">
-                <div class="icon">🔧</div>
+            <div class="feature-card-modern">
+                <div class="feature-icon">📊</div>
+                <h3>Analytics</h3>
+                <p>Tableaux de bord analytiques avec métriques détaillées et rapports d'utilisation pour optimiser la gestion.</p>
+                <ul class="feature-list">
+                    <li>Métriques en temps réel</li>
+                    <li>Rapports d'usage</li>
+                    <li>Prédictions</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon">🔧</div>
                 <h3>Maintenance</h3>
-                <p>Système de suivi de maintenance et alertes automatiques.</p>
+                <p>Système de suivi de maintenance préventive avec alertes et planification automatique des interventions.</p>
+                <ul class="feature-list">
+                    <li>Maintenance préventive</li>
+                    <li>Alertes techniques</li>
+                    <li>Planning auto</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card-modern">
+                <div class="feature-icon">🌐</div>
+                <h3>API Intégrée</h3>
+                <p>API RESTful pour intégration facile avec d'autres systèmes et possibilité d'extension du projet.</p>
+                <ul class="feature-list">
+                    <li>API REST complète</li>
+                    <li>Documentation</li>
+                    <li>Webhooks</li>
+                </ul>
             </div>
         </div>
 
-        <div class="card">
-            <h2>💻 Technologies Utilisées</h2>
-            <div class="tech-list">
-                <div class="tech-item">
-                    <h4>Backend</h4>
-                    <p>Flask (Python) pour une architecture robuste et performante</p>
+        <!-- Tech Stack -->
+        <h2 class="section-title">💻 Stack Technique</h2>
+        <div class="tech-stack">
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon">⚙️</span>
+                    <h3>Backend</h3>
                 </div>
-                <div class="tech-item">
-                    <h4>Frontend</h4>
-                    <p>HTML5, CSS3 et JavaScript pour une interface moderne</p>
+                <div class="tech-items">
+                    <span class="tech-badge">Python 3.11</span>
+                    <span class="tech-badge">Flask</span>
+                    <span class="tech-badge">CSV Database</span>
+                    <span class="tech-badge">RESTful API</span>
                 </div>
-                <div class="tech-item">
-                    <h4>Hardware</h4>
-                    <p>Arduino, RFID, LCD et contrôleurs pour l'intégration matérielle</p>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon">🎨</span>
+                    <h3>Frontend</h3>
                 </div>
-                <div class="tech-item">
-                    <h4>Base de données</h4>
-                    <p>Système de fichiers CSV pour un stockage simple et efficace</p>
+                <div class="tech-items">
+                    <span class="tech-badge">HTML5</span>
+                    <span class="tech-badge">CSS3</span>
+                    <span class="tech-badge">JavaScript</span>
+                    <span class="tech-badge">Responsive Design</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon">🔌</span>
+                    <h3>Hardware</h3>
+                </div>
+                <div class="tech-items">
+                    <span class="tech-badge">Arduino</span>
+                    <span class="tech-badge">RFID RC522</span>
+                    <span class="tech-badge">LCD I2C</span>
+                    <span class="tech-badge">Servomoteurs</span>
+                </div>
+            </div>
+
+            <div class="tech-category">
+                <div class="tech-category-header">
+                    <span class="tech-icon">🛠️</span>
+                    <h3>Outils</h3>
+                </div>
+                <div class="tech-items">
+                    <span class="tech-badge">Git</span>
+                    <span class="tech-badge">GitHub</span>
+                    <span class="tech-badge">VS Code</span>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <h2>🤝 Contribuer</h2>
-            <p>Ce projet est en constante évolution. Pour contribuer au développement, signaler des bugs ou proposer de nouvelles fonctionnalités, n'hésitez pas à consulter notre dépôt GitHub ou à nous contacter via la page de contact.</p>
+        <!-- Architecture -->
+        <div class="architecture-card">
+            <h2>🏗️ Architecture du Système</h2>
+            <div class="architecture-content">
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon">🌐</span>
+                        <h4>Couche Présentation</h4>
+                    </div>
+                    <p>Interface web responsive avec dashboard interactif</p>
+                </div>
+                
+                <div class="arch-arrow">↓</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon">⚡</span>
+                        <h4>Couche Application</h4>
+                    </div>
+                    <p>API Flask avec logique métier et gestion des routes</p>
+                </div>
+                
+                <div class="arch-arrow">↓</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon">💾</span>
+                        <h4>Couche Données</h4>
+                    </div>
+                    <p>Stockage CSV avec modèles Casier et Emprunt</p>
+                </div>
+                
+                <div class="arch-arrow">↓</div>
+                
+                <div class="arch-layer">
+                    <div class="arch-layer-title">
+                        <span class="arch-icon">🔧</span>
+                        <h4>Couche Physique</h4>
+                    </div>
+                    <p>Arduino + RFID + LCD pour le contrôle matériel</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Card -->
+        <div class="cta-card">
+            <h2>🤝 Rejoignez le Projet</h2>
+            <p>Ce projet est open source et en constante évolution. Votre contribution peut faire la différence !</p>
+            <div class="cta-buttons">
+                <a href="https://github.com" class="btn btn-primary" target="_blank">
+                    <span>📦 GitHub</span>
+                </a>
+                <a href="{{ url_for('casiers.contact') }}" class="btn btn-secondary">
+                    <span>💬 Contact</span>
+                </a>
+                <a href="{{ url_for('casiers.dashboard') }}" class="btn btn-secondary">
+                    <span>📊 Dashboard</span>
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %}

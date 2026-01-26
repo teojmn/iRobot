@@ -1,28 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    {% include 'base.html' %}
-    <div class="contact-container">
-        <h1>Contact Us</h1>
-        <form action="{{ url_for('casiers.contact') }}" method="post">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+{% extends 'base.html' %}
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+{% block title %}Contact - iRobot Locker{% endblock %}
 
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>✉️ Nous Contacter</h1>
+            <p>Une question ? Un problème ? N'hésitez pas à nous contacter</p>
+        </div>
 
-            <button type="submit">Send Message</button>
-        </form>
+        <div class="contact-wrapper">
+            <div class="card contact-form-card">
+                <h2>Formulaire de Contact</h2>
+                <form action="{{ url_for('casiers.contact') }}" method="post" class="contact-form">
+                    <div class="form-group">
+                        <label for="name">👤 Nom</label>
+                        <input type="text" id="name" name="name" placeholder="Votre nom complet" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">📧 Email</label>
+                        <input type="email" id="email" name="email" placeholder="votre.email@exemple.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">💬 Message</label>
+                        <textarea id="message" name="message" placeholder="Votre message..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">📤 Envoyer le message</button>
+                </form>
+            </div>
+
+            <div class="card contact-info-card">
+                <h2>Informations</h2>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <div class="icon">📍</div>
+                        <div>
+                            <h4>Adresse</h4>
+                            <p>Campus Universitaire<br>Département Informatique</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="icon">📧</div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>support@irobot-locker.fr</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="icon">⏰</div>
+                        <div>
+                            <h4>Horaires</h4>
+                            <p>Lun - Ven : 8h00 - 18h00<br>Sam : 9h00 - 12h00</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="icon">🆘</div>
+                        <div>
+                            <h4>Support</h4>
+                            <p>Disponible 24/7 pour les urgences</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% include 'footer.html' %}
-</body>
-</html>
+{% endblock %}

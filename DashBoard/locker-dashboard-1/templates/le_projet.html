@@ -1,33 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Projet</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    {% include 'base.html' %}
+{% extends 'base.html' %}
+
+{% block title %}Le Projet - iRobot Locker{% endblock %}
+
+{% block content %}
     <div class="container">
-        <h1>Le Projet</h1>
-        <p>Bienvenue sur la page du projet. Voici quelques informations clés :</p>
-        <h2>Objectif du Projet</h2>
-        <p>Ce projet vise à fournir une solution de gestion des casiers et des emprunts.</p>
-        
-        <h2>Fonctionnalités</h2>
-        <ul>
-            <li>Gestion des casiers</li>
-            <li>Gestion des emprunts</li>
-            <li>Interface utilisateur intuitive</li>
-            <li>Support pour les utilisateurs</li>
-        </ul>
+        <div class="page-header">
+            <h1>📋 Le Projet iRobot Locker</h1>
+            <p>Un système innovant de gestion de casiers intelligents</p>
+        </div>
 
-        <h2>Technologies Utilisées</h2>
-        <p>Ce projet utilise Flask pour le backend et Vue.js pour le frontend.</p>
+        <div class="card">
+            <h2>🎯 Objectif du Projet</h2>
+            <p>Ce projet vise à fournir une solution complète et moderne de gestion des casiers et des emprunts. Notre système intelligent permet une gestion efficace et automatisée de l'attribution, de la surveillance et de la maintenance des casiers.</p>
+        </div>
 
-        <h2>Contribuer</h2>
-        <p>Pour contribuer au projet, veuillez consulter le dépôt GitHub.</p>
+        <div class="project-content">
+            <div class="feature-card">
+                <div class="icon">🗄️</div>
+                <h3>Gestion des Casiers</h3>
+                <p>Système complet de gestion des casiers avec suivi en temps réel de leur statut et disponibilité.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">📝</div>
+                <h3>Gestion des Emprunts</h3>
+                <p>Suivi détaillé des emprunts avec historique complet et notifications automatiques.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🎨</div>
+                <h3>Interface Intuitive</h3>
+                <p>Interface utilisateur moderne et responsive, facile à utiliser sur tous les appareils.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🔒</div>
+                <h3>Sécurité RFID</h3>
+                <p>Système de contrôle d'accès par carte RFID pour une sécurité optimale.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">📊</div>
+                <h3>Statistiques</h3>
+                <p>Tableau de bord avec statistiques en temps réel et rapports détaillés.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🔧</div>
+                <h3>Maintenance</h3>
+                <p>Système de suivi de maintenance et alertes automatiques.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💻 Technologies Utilisées</h2>
+            <div class="tech-list">
+                <div class="tech-item">
+                    <h4>Backend</h4>
+                    <p>Flask (Python) pour une architecture robuste et performante</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Frontend</h4>
+                    <p>HTML5, CSS3 et JavaScript pour une interface moderne</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Hardware</h4>
+                    <p>Arduino, RFID, LCD et contrôleurs pour l'intégration matérielle</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Base de données</h4>
+                    <p>Système de fichiers CSV pour un stockage simple et efficace</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🤝 Contribuer</h2>
+            <p>Ce projet est en constante évolution. Pour contribuer au développement, signaler des bugs ou proposer de nouvelles fonctionnalités, n'hésitez pas à consulter notre dépôt GitHub ou à nous contacter via la page de contact.</p>
+        </div>
     </div>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
-</html>
+{% endblock %}

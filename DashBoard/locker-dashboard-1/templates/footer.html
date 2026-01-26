@@ -1,9 +1,27 @@
-<footer style="background-color: #333; color: white; text-align: center; padding: 20px; margin-top: 50px;">
+<footer>
     <div class="footer-content">
+        <div class="footer-section">
+            <h3>🤖 iRobot Locker</h3>
+            <p>Système de gestion intelligente de casiers</p>
+        </div>
+        <div class="footer-section">
+            <h4>Navigation</h4>
+            <ul class="footer-links">
+                <li><a href="{{ url_for('casiers.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('casiers.le_projet') }}">Le Projet</a></li>
+                <li><a href="{{ url_for('casiers.contact') }}">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Support</h4>
+            <ul class="footer-links">
+                <li><a href="mailto:support@irobot-locker.fr">Email Support</a></li>
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
         <p>&copy; 2026 iRobot Locker Dashboard. Tous droits réservés.</p>
-        <p>
-            <a href="{{ url_for('casiers.contact') }}" style="color: #4CAF50; text-decoration: none;">Contact</a> | 
-            <a href="{{ url_for('casiers.le_projet') }}" style="color: #4CAF50; text-decoration: none;">À propos</a>
-        </p>
     </div>
 </footer>

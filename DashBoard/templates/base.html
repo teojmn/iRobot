@@ -3,33 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}iRobot Locker Dashboard{% endblock %}</title>
+    <title>{% block title %}Dashboard - HDMI Locker 3000{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header class="header">
         <div class="header-content">
             <div class="header-text">
-                <h1>iRobot Locker</h1>
-                <p>Système de Gestion de Casiers Intelligente</p>
+                <h1>HDMI Locker 3000</h1>
             </div>
         </div>
     </header>
     
     <nav>
         <ul>
-            <li><a href="{{ url_for('casiers.dashboard') }}" {% if request.endpoint == 'casiers.dashboard' %}class="active"{% endif %}>📊 Dashboard</a></li>
-            <li><a href="{{ url_for('casiers.le_projet') }}" {% if request.endpoint == 'casiers.le_projet' %}class="active"{% endif %}>📋 Le Projet</a></li>
+            <li><a href="{{ url_for('dashboard') }}" {% if request.endpoint == 'dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+            <li><a href="{{ url_for('le_projet') }}" {% if request.endpoint == 'le_projet' %}class="active"{% endif %}>Le Projet</a></li>
         </ul>
     </nav>
 
     <main>
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
     
     {% include 'footer.html' %}
-    
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

@@ -12,22 +12,22 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label" style="color: white;">Total Casiers</div>
-                <div class="stat-number" id="total-casiers" style="color: white;">0</div>
+                <div class="stat-number" style="color: white;">{{ stats.total }}</div>
             </div>
             <div class="stat-card" style="background: linear-gradient(135deg, var(--ok), #27ae60);">
-                <div class="stat-label" style="color: white;">Casiers Disponibles</div>
-                <div class="stat-number" id="casiers-disponibles" style="color: white;">0</div>
+                <div class="stat-label" style="color: white;">Casiers Pleins</div>
+                <div class="stat-number" style="color: white;">{{ stats.disponibles }}</div>
             </div>
             <div class="stat-card" style="background: linear-gradient(135deg, var(--danger), #c0392b);">
-                <div class="stat-label" style="color: white;">Casiers Occupés</div>
-                <div class="stat-number" id="casiers-occupes" style="color: white;">0</div>
+                <div class="stat-label" style="color: white;">Casiers Vides</div>
+                <div class="stat-number" style="color: white;">{{ stats.occupes }}</div>
             </div>
         </div>
 
         <div class="card">
             <h2>Liste des Casiers</h2>
             <div class="table-container">
-                <table id="casiers-table">
+                <table>
                     <thead>
                         <tr>
                             <th>ID Casier</th>
@@ -36,9 +36,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="3" style="text-align: center; color: var(--muted);">Chargement...</td>
-                        </tr>
+                        {% if casiers %}
+                            {% for casier in casiers %}
+                                {% set badge_class = 'disponible' if casier.statut == 'disponible' else 'occupe' %}
+                                {% set status_text = 'Empruntable' if casier.statut == 'disponible' else 'Non Empruntable' %}
+                                <tr>
+                                    <td>{{ casier.numero }}</td>
+                                    <td>{{ casier.etat }}</td>
+                                    <td><span class="badge {{ badge_class }}">{{ status_text }}</span></td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: var(--muted);">Aucun casier disponible</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -47,7 +59,7 @@
         <div class="card">
             <h2>Emprunts Récents</h2>
             <div class="table-container">
-                <table id="emprunts-table">
+                <table>
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -58,9 +70,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--muted);">Chargement...</td>
-                        </tr>
+                        {% if emprunts %}
+                            {% for emprunt in emprunts %}
+                                {% set statut_class = 'en-cours' if emprunt.statut == 'EN COURS' else '' %}
+                                <tr>
+                                    <td>{{ emprunt.id }}</td>
+                                    <td>{{ emprunt.casier_id }}</td>
+                                    <td>{{ emprunt.utilisateur }}</td>
+                                    <td>{{ emprunt.date_debut }}</td>
+                                    <td><span class="badge {{ statut_class }}">{{ emprunt.statut }}</span></td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--muted);">Aucun emprunt enregistré</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

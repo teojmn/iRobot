@@ -1,29 +1,51 @@
 import pygame
 import time
 import os
+import subprocess
 
 class Speaker:
     """Gère la lecture de sons via le haut-parleur USB"""
     
-    def __init__(self, volume=0.5):
+    def __init__(self, volume=0.5, system_volume=100):
         """
         Initialise pygame mixer pour la lecture audio
         
         Args:
-            volume: Volume de lecture (0.0 à 1.0, par défaut 0.5)
+            volume: Volume de lecture pygame (0.0 à 1.0, par défaut 0.5)
+            system_volume: Volume système (0 à 100, par défaut 100%)
         """
         try:
             pygame.mixer.init()
             self.initialized = True
             self.set_volume(volume)
+            self.set_system_volume(system_volume)
             print("✓ Haut-parleur initialisé")
         except Exception as e:
             print(f"⚠ Erreur d'initialisation du haut-parleur: {e}")
             self.initialized = False
     
+    def set_system_volume(self, volume):
+        """
+        Ajuste le volume système du Raspberry Pi
+        
+        Args:
+            volume: Valeur entre 0 et 100
+        """
+        try:
+            # Limiter le volume entre 0 et 100
+            volume = max(0, min(100, volume))
+            # Commande amixer pour régler le volume du haut-parleur USB
+            subprocess.run(['amixer', 'sset', 'PCM', f'{volume}%'], 
+                         check=True, capture_output=True)
+            print(f"🔊 Volume système réglé à {volume}%")
+        except subprocess.CalledProcessError as e:
+            print(f"⚠ Erreur lors du réglage du volume système: {e}")
+        except FileNotFoundError:
+            print("⚠ Commande amixer non trouvée (système non-Linux?)")
+    
     def set_volume(self, volume):
         """
-        Ajuste le volume de lecture
+        Ajuste le volume de lecture pygame
         
         Args:
             volume: Valeur entre 0.0 (muet) et 1.0 (volume max)
@@ -32,7 +54,7 @@ class Speaker:
             # Limiter le volume entre 0.0 et 1.0
             volume = max(0.0, min(1.0, volume))
             pygame.mixer.music.set_volume(volume)
-            print(f"🔊 Volume réglé à {int(volume * 100)}%")
+            print(f"🔊 Volume pygame réglé à {int(volume * 100)}%")
     
     def play_sound(self, file_path, duration=None):
         """
@@ -82,7 +104,7 @@ class Speaker:
 if __name__ == "__main__":
     # Test du haut-parleur
     print("=== Test du haut-parleur ===")
-    speaker = Speaker(volume=0.3)  # Volume à 30%
+    speaker = Speaker(volume=1.0, system_volume=100)  # Volume max
     
     # Chemin vers le fichier test
     audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")

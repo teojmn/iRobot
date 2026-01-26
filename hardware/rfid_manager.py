@@ -77,15 +77,23 @@ class RFIDManager:
 
     def handle_normal_mode(self, uid):
         """Logique d'emprunt/rendu classique"""
-        self.lcd.write("Veuillez", "patienter...")
+        try:
+            self.lcd.write("Veuillez", "patienter...")
+        except OSError as e:
+            self.lcd.cursor_mode = 'hide'
+            print(f"Erreur LCD: {e}")
         
         mail = self.user_mgr.get_mail_by_uid(uid)
         
         if not mail:
             print(f"ID {uid} inconnu. Veuillez scanner le QR Code sur le casier.")
-            self.lcd.write("Utilisateur", "inconnu")
-            time.sleep(3)
-            self.lcd.write("Scannez le", "QR code")
+            try:
+                self.lcd.write("Utilisateur", "inconnu")
+                time.sleep(3)
+                self.lcd.write("Scannez le", "QR code")
+            except OSError:
+                self.lcd.cursor_mode = 'hide'
+                pass
             return
 
         print(f"Utilisateur reconnu : {mail}")

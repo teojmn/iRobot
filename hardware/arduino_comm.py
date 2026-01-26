@@ -2,6 +2,7 @@ import serial
 import time
 import sys
 import os
+import threading
 from hardware.speaker import Speaker
 
 # --- Configuration du port série ---
@@ -30,10 +31,21 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
         
         print(f"Connexion établie sur {SERIAL_PORT}")
         print(f"Envoi : Canal {channel} -> Relais {channel + 1}")
+                
+        # Jouer le son maintenant que la serrure est ouverte
+        if speaker and casier_id:
+            # Construire le chemin du fichier audio spécifique au casier
+            audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", f"audio_{casier_id}.mp3")
+            if os.path.exists(audio_path):
+                print(f"🔊 Lecture du son pour le casier {casier_id}")
+                threading.Thread(target=speaker.play_sound, args=(audio_path, 3), daemon=True).start()
+            else:
+                print(f"⚠ Fichier audio introuvable: {audio_path}")
 
         # 5. Envoi de la commande binaire (1 octet)
         ser.write(bytes([channel]))
         ser.flush()  # Force l'envoi immédiat
+        
         
         # 6. Lecture de la confirmation de l'Arduino (optionnel)
         time.sleep(0.3)
@@ -41,14 +53,8 @@ def send_relay_command(channel, lcd=None, casier_id=None, speaker=None):
             response = ser.readline().decode('utf-8', errors='ignore').strip()
             if response:
                 print(f"Arduino -> {response}")
-
-                # Jouer le son d'ouverture en même temps que l'affichage LCD
-                if speaker:
-                    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
-                    if os.path.exists(audio_path):
-                        speaker.play_sound(audio_path, duration=4)
-                        
-                # Afficher sur LCD au moment de la confirmation Arduino
+                
+                # Afficher sur LCD et jouer le son AU MOMENT où le relais s'active
                 if lcd and casier_id:
                     lcd.write_temporary(f"Casier {casier_id}", "ouvert", 4)
 
@@ -69,7 +75,7 @@ class ArduinoComm:
         self.serial_port = SERIAL_PORT
         self.baud_rate = BAUD_RATE
         self.lcd = lcd
-        self.speaker = speaker or Speaker(volume=0.8)
+        self.speaker = speaker or Speaker(volume=1.0, system_volume=80)  # Volume max
     
     def envoyer_commande(self, id_casier, action):
         """Envoie une commande à l'Arduino pour contrôler un casier"""
@@ -82,8 +88,7 @@ class ArduinoComm:
             
             if action.upper() == "OUVRIR":
                 print(f"\n🔓 Ouverture du casier {id_int} (Canal Arduino: {channel})")
-                
-                send_relay_command(channel, self.lcd, id_int, None)  # Ne pas passer speaker ici
+                send_relay_command(channel, self.lcd, id_int, self.speaker)
             else:
                 print(f"Action inconnue: {action}")
                 

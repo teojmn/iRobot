@@ -29,6 +29,8 @@ class RFIDManager:
         
         self.last_uid = None
         self.last_read_time = 0
+        self.cooldown_duration = 5  # Durée du blocage après détection (en secondes)
+        self.is_processing = False  # Flag pour bloquer les lectures pendant le traitement
 
     def read_uid_no_block(self):
         """Tente de lire un UID sans bloquer, avec le format SimpleMFRC522"""
@@ -157,18 +159,26 @@ class RFIDManager:
                     self.lcd.start_alternating()
                     delattr(self, '_association_msg_shown')
                 
-                # 2. Tenter de détecter une carte (sans bloquer)
+                # 2. Vérifier si on est en période de cooldown
+                current_time = time.time()
+                if self.is_processing and (current_time - self.last_read_time) < self.cooldown_duration:
+                    time.sleep(0.1)
+                    continue
+                
+                # Fin du cooldown, réactiver le lecteur
+                if self.is_processing:
+                    self.is_processing = False
+                    print("Lecteur RFID réactivé")
+                
+                # 3. Tenter de détecter une carte (sans bloquer)
                 uid = self.read_uid_no_block()
                 
                 if uid:
-                    # Anti-rebond : ignorer si c'est la même carte dans les 3 dernières secondes
-                    current_time = time.time()
-                    if uid == self.last_uid and (current_time - self.last_read_time) < 3:
-                        time.sleep(0.1)
-                        continue
-                    
+                    # Bloquer immédiatement le lecteur
+                    self.is_processing = True
                     self.last_uid = uid
                     self.last_read_time = current_time
+                    print(f"Carte détectée - Lecteur RFID bloqué pour {self.cooldown_duration}s")
                     
                     if pending_mail:
                         # MODE ASSOCIATION
@@ -205,12 +215,10 @@ class RFIDManager:
                                 print(f"Erreur écriture erreur: {e}")
                         
                         delattr(self, '_association_msg_shown')
-                        time.sleep(2)
                     else:
                         # MODE NORMAL
                         print(f"\n--- Carte détectée : {uid} ---")
                         self.handle_normal_mode(uid)
-                        time.sleep(3)  # Anti-rebond supplémentaire
                 
                 # Petite pause pour ne pas saturer le CPU (10 vérifications/seconde)
                 time.sleep(0.1)

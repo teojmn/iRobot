@@ -98,8 +98,15 @@ class Speaker:
     def cleanup(self):
         """Libère les ressources"""
         if self.initialized:
-            pygame.mixer.quit()
-
+            try:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.unload()  # Décharge le fichier audio
+                pygame.mixer.quit()
+                pygame.quit()  # Quitter pygame complètement
+                self.initialized = False
+                print("✓ Ressources audio libérées")
+            except Exception as e:
+                print(f"⚠ Erreur lors du nettoyage: {e}")
 
 if __name__ == "__main__":
     # Test du haut-parleur

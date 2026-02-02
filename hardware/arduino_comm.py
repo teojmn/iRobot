@@ -75,18 +75,15 @@ class ArduinoComm:
         self.serial_port = SERIAL_PORT
         self.baud_rate = BAUD_RATE
         self.lcd = lcd
-        
-        # Initialiser le haut-parleur de manière sécurisée
-        try:
-            self.speaker = speaker or Speaker(volume=1.0, system_volume=80)
-        except Exception as e:
-            print(f"⚠ Haut-parleur non initialisé, le système continuera sans audio: {e}")
-            self.speaker = None
+        self.speaker = speaker or Speaker(volume=1.0, system_volume=80)  # Volume max
     
     def envoyer_commande(self, id_casier, action):
         """Envoie une commande à l'Arduino pour contrôler un casier"""
         try:
+            # Force la conversion en entier (important si id_casier est une string)
             id_int = int(id_casier)
+            
+            # Convertir l'ID du casier (1-15) en numéro de canal (0-14)
             channel = id_int - 1
             
             if action.upper() == "OUVRIR":

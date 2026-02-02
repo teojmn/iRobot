@@ -22,15 +22,17 @@ class RFIDManager:
         self.emprunt_mgr = EmpruntManager()
         self.locker_mgr = LockerManager()
         self.lcd = LCDDisplay()
-        self.arduino = ArduinoComm(self.lcd)  # Passer l'objet LCD
+        
+        # Initialiser ArduinoComm (qui gère le haut-parleur en interne)
+        self.arduino = ArduinoComm(self.lcd)
         
         self.state_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rfid_state.json')
-        self.association_timeout = 20  # secondes pour passer la carte
+        self.association_timeout = 20
         
         self.last_uid = None
         self.last_read_time = 0
-        self.cooldown_duration = 5  # Durée du blocage après détection (en secondes)
-        self.is_processing = False  # Flag pour bloquer les lectures pendant le traitement
+        self.cooldown_duration = 5
+        self.is_processing = False
 
     def read_uid_no_block(self):
         """Tente de lire un UID sans bloquer, avec le format SimpleMFRC522"""

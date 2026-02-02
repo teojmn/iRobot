@@ -14,6 +14,7 @@ class Speaker:
             volume: Volume de lecture pygame (0.0 à 1.0, par défaut 0.5)
             system_volume: Volume système (0 à 100, par défaut 100%)
         """
+        self.initialized = False
         try:
             pygame.mixer.init()
             self.initialized = True
@@ -21,7 +22,7 @@ class Speaker:
             self.set_system_volume(system_volume)
             print("✓ Haut-parleur initialisé")
         except Exception as e:
-            print(f"⚠ Erreur d'initialisation du haut-parleur: {e}")
+            print(f"⚠ Haut-parleur non disponible (le système continuera sans audio): {e}")
             self.initialized = False
     
     def set_system_volume(self, volume):
@@ -31,17 +32,16 @@ class Speaker:
         Args:
             volume: Valeur entre 0 et 100
         """
+        if not self.initialized:
+            return
+        
         try:
-            # Limiter le volume entre 0 et 100
             volume = max(0, min(100, volume))
-            # Commande amixer pour régler le volume du haut-parleur USB
             subprocess.run(['amixer', 'sset', 'PCM', f'{volume}%'], 
                          check=True, capture_output=True)
             print(f"🔊 Volume système réglé à {volume}%")
-        except subprocess.CalledProcessError as e:
-            print(f"⚠ Erreur lors du réglage du volume système: {e}")
-        except FileNotFoundError:
-            print("⚠ Commande amixer non trouvée (système non-Linux?)")
+        except Exception as e:
+            print(f"⚠ Volume système non ajusté: {e}")
     
     def set_volume(self, volume):
         """
@@ -50,11 +50,15 @@ class Speaker:
         Args:
             volume: Valeur entre 0.0 (muet) et 1.0 (volume max)
         """
-        if self.initialized:
-            # Limiter le volume entre 0.0 et 1.0
+        if not self.initialized:
+            return
+        
+        try:
             volume = max(0.0, min(1.0, volume))
             pygame.mixer.music.set_volume(volume)
             print(f"🔊 Volume pygame réglé à {int(volume * 100)}%")
+        except Exception as e:
+            print(f"⚠ Erreur lors du réglage du volume: {e}")
     
     def play_sound(self, file_path, duration=None):
         """
@@ -65,55 +69,43 @@ class Speaker:
             duration: Durée de lecture en secondes (None = jusqu'à la fin)
         """
         if not self.initialized:
-            print("⚠ Haut-parleur non initialisé")
-            return
+            return  # Pas d'erreur, on ignore silencieusement
         
         try:
             if not os.path.exists(file_path):
                 print(f"⚠ Fichier audio introuvable: {file_path}")
                 return
             
-            # Charger et jouer le son
             pygame.mixer.music.load(file_path)
             pygame.mixer.music.play()
             print(f"🔊 Lecture de: {os.path.basename(file_path)}")
             
-            # Attendre la durée spécifiée ou jusqu'à la fin
             if duration:
                 time.sleep(duration)
                 pygame.mixer.music.stop()
             else:
-                # Attendre que la lecture soit terminée
                 while pygame.mixer.music.get_busy():
                     time.sleep(0.1)
                     
         except Exception as e:
-            print(f"⚠ Erreur lors de la lecture: {e}")
+            print(f"⚠ Lecture audio ignorée: {e}")
     
     def stop(self):
         """Arrête la lecture en cours"""
-        if self.initialized:
+        if not self.initialized:
+            return
+        
+        try:
             pygame.mixer.music.stop()
+        except Exception as e:
+            print(f"⚠ Erreur lors de l'arrêt: {e}")
     
     def cleanup(self):
         """Libère les ressources"""
-        if self.initialized:
+        if not self.initialized:
+            return
+        
+        try:
             pygame.mixer.quit()
-
-
-if __name__ == "__main__":
-    # Test du haut-parleur
-    print("=== Test du haut-parleur ===")
-    speaker = Speaker(volume=1.0, system_volume=100)  # Volume max
-    
-    # Chemin vers le fichier test
-    audio_path = os.path.join(os.path.dirname(__file__), "..", "audio", "test2.mp3")
-    
-    if os.path.exists(audio_path):
-        print(f"Test avec: {audio_path}")
-        speaker.play_sound(audio_path, duration=2)
-        print("✓ Test terminé")
-    else:
-        print(f"⚠ Fichier de test non trouvé: {audio_path}")
-    
-    speaker.cleanup()
+        except Exception as e:
+            print(f"⚠ Erreur lors du nettoyage: {e}")

@@ -6,7 +6,6 @@ from mfrc522 import MFRC522
 import RPi.GPIO as GPIO
 import sys
 
-# Ajout du chemin parent pour importer les modèles
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models.user_manager import UserManager
@@ -22,15 +21,15 @@ class RFIDManager:
         self.emprunt_mgr = EmpruntManager()
         self.locker_mgr = LockerManager()
         self.lcd = LCDDisplay()
-        self.arduino = ArduinoComm(self.lcd)  # Passer l'objet LCD
+        self.arduino = ArduinoComm(self.lcd)
         
         self.state_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rfid_state.json')
-        self.association_timeout = 20  # secondes pour passer la carte
+        self.association_timeout = 20
         
         self.last_uid = None
         self.last_read_time = 0
-        self.cooldown_duration = 5  # Durée du blocage après détection (en secondes)
-        self.is_processing = False  # Flag pour bloquer les lectures pendant le traitement
+        self.cooldown_duration = 5
+        self.is_processing = False
 
     def read_uid_no_block(self):
         """Tente de lire un UID sans bloquer, avec le format SimpleMFRC522"""
@@ -39,8 +38,7 @@ class RFIDManager:
         if status == self.reader.MI_OK:
             (status, uid_bytes) = self.reader.MFRC522_Anticoll()
             if status == self.reader.MI_OK:
-                # FORMULE EXACTE DE SIMPLEMFRC522 :
-                # On prend les 4 premiers octets et on les transforme en entier
+                # 4 premiers octets transformés en int
                 n = 0
                 for i in range(0, 4):
                     n = n << 8
@@ -57,13 +55,11 @@ class RFIDManager:
             with open(self.state_file, 'r') as f:
                 data = json.load(f)
             
-            # Vérifier si la demande n'est pas trop vieille (timeout)
             if data.get('mode') == 'ASSOCIATION':
                 start_time = data.get('timestamp', 0)
                 if time.time() - start_time < self.association_timeout:
                     return data.get('mail')
                 else:
-                    # Timeout expiré, on repasse en normal
                     self.reset_state()
         except Exception as e:
             print(f"Erreur lecture state: {e}")
@@ -102,7 +98,6 @@ class RFIDManager:
         
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        # 1) Si l'utilisateur a déjà un emprunt -> RENDU
         if self.emprunt_mgr.get_emprunt(mail):
             print("Action : Rendu de matériel")
             
@@ -113,15 +108,13 @@ class RFIDManager:
                 return
             
             print(f"Ouverture du casier {id_casier}...")
-            self.arduino.envoyer_commande(id_casier, "OUVRIR")  # LCD géré dans arduino_comm
+            self.arduino.envoyer_commande(id_casier, "OUVRIR")
             self.emprunt_mgr.cloturer_emprunt(mail, now)
             
-            # ✅ CORRECTION : Après un RENDU, le câble est déposé → casier devient PLEIN
             self.locker_mgr.casier_plein(id_casier)
             print(f"✓ Casier {id_casier} rendu et libéré")
             return
         
-        # 2) Sinon -> EMPRUNT
         print("Action : Nouvel emprunt")
         
         id_casier = self.locker_mgr.get_premier_libre()
@@ -140,7 +133,6 @@ class RFIDManager:
             self.lcd.start_alternating()
             return
         
-        # ✅ CORRECTION : Après un EMPRUNT, le câble est pris → casier devient VIDE
         self.locker_mgr.casier_vide(id_casier)
         print(f"✓ Casier {id_casier} attribué à {mail}")
 
@@ -148,10 +140,8 @@ class RFIDManager:
         print("--- Système iRobot RFID prêt (Mode Réactif) ---")
         try:
             while True:
-                # 1. Vérifier le JSON à chaque tour de boucle (très rapide)
                 pending_mail = self.get_pending_association()
                 
-                # Afficher le bon message selon le mode
                 if pending_mail and not hasattr(self, '_association_msg_shown'):
                     self.lcd.write("Enregistrez", "votre carte")
                     self._association_msg_shown = True
@@ -159,36 +149,30 @@ class RFIDManager:
                     self.lcd.start_alternating()
                     delattr(self, '_association_msg_shown')
                 
-                # 2. Vérifier si on est en période de cooldown
                 current_time = time.time()
                 if self.is_processing and (current_time - self.last_read_time) < self.cooldown_duration:
                     time.sleep(0.1)
                     continue
                 
-                # Fin du cooldown, réactiver le lecteur
                 if self.is_processing:
                     self.is_processing = False
                     print("Lecteur RFID réactivé")
                 
-                # 3. Tenter de détecter une carte (sans bloquer)
                 uid = self.read_uid_no_block()
                 
                 if uid:
-                    # Bloquer immédiatement le lecteur
                     self.is_processing = True
                     self.last_uid = uid
                     self.last_read_time = current_time
                     print(f"Carte détectée - Lecteur RFID bloqué pour {self.cooldown_duration}s")
                     
                     if pending_mail:
-                        # MODE ASSOCIATION
                         print(f"\n>>> ASSOCIATION : Carte {uid} pour {pending_mail}")
                         success = self.user_mgr.register_user(uid, pending_mail)
                         
                         if success:
                             print(f"✓ Succès ! Carte {uid} associée à {pending_mail}")
                             self.lcd.write_temporary("Succes !", "", 3)
-                            # Écrire le succès dans le JSON pour que Flask le lise
                             try:
                                 with open(self.state_file, 'w') as f:
                                     json.dump({
@@ -202,7 +186,6 @@ class RFIDManager:
                         else:
                             print("✗ Erreur : Carte ou Email déjà enregistré.")
                             self.lcd.write_temporary("Carte deja", "enregistree", 3)
-                            # Écrire l'échec dans le JSON
                             try:
                                 with open(self.state_file, 'w') as f:
                                     json.dump({
@@ -216,11 +199,9 @@ class RFIDManager:
                         
                         delattr(self, '_association_msg_shown')
                     else:
-                        # MODE NORMAL
                         print(f"\n--- Carte détectée : {uid} ---")
                         self.handle_normal_mode(uid)
                 
-                # Petite pause pour ne pas saturer le CPU (10 vérifications/seconde)
                 time.sleep(0.1)
                 
         except KeyboardInterrupt:

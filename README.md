@@ -222,13 +222,6 @@ The SMTP system can send automated reminders to users who haven't returned cable
 
 See `smtp/explication_cron.py` for detailed cron setup instructions.
 
-## 🔍 Testing
-
-Test RFID functionality:
-```bash
-python3 hardware/test_rfid_simple.py
-```
-
 ## 📝 Notes
 
 - The system uses a cooldown mechanism to prevent duplicate reads (5 seconds by default)

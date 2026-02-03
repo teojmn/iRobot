@@ -22,7 +22,6 @@ class EmpruntManager:
     
     def creer_emprunt(self, mail, id_casier, timestamp):
         """Ajoute un nouvel emprunt avec le statut EN COURS si l'utilisateur n'a pas déjà un emprunt"""
-        # Vérifier si l'utilisateur a déjà un emprunt EN COURS
         if self.get_emprunt(mail):
             return False
         

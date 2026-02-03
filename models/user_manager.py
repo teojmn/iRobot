@@ -29,7 +29,6 @@ class UserManager:
     def register_user(self, uid, mail):
         """Associe un UID à un mail s'ils ne sont pas déjà utilisés"""
         uid = str(uid)
-        # Vérifier si l'UID ou le mail existe déjà
         if uid in self.df['uid'].values or mail in self.df['mail'].values:
             return False
         

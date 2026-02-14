@@ -4,3 +4,4 @@ data/
 start.sh
 stop.sh
 __pycache__/
+.env

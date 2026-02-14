@@ -1,6 +1,7 @@
 from pathlib import Path
 import csv
 from flask import Flask, render_template, redirect, url_for
+import os
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -59,6 +60,14 @@ def dashboard():
 @app.route("/le-projet")
 def le_projet():
     return render_template("le_projet.html")
+
+@app.route('/reboot', methods=['POST'])
+def reboot():
+    try:
+        os.system('sudo reboot')
+        return "Redémarrage en cours...", 200
+    except Exception as e:
+        return str(e), 500
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5010)

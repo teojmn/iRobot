@@ -12,6 +12,11 @@
             <div class="header-text">
                 <h1>HDMI Locker 3000</h1>
             </div>
+            <div class="header-actions">
+                <button onclick="confirmReboot()" class="reboot-btn">
+                    🔄 Redémarrer
+                </button>
+            </div>
         </div>
     </header>
     
@@ -27,5 +32,23 @@
     </main>
     
     {% include 'footer.html' %}
+
+    <script>
+    function confirmReboot() {
+        if (confirm("⚠️ Es-tu sûr de vouloir redémarrer le Raspberry Pi ?\n\nLe système sera indisponible pendant environ 30 secondes.")) {
+            fetch('/reboot', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Le système redémarre maintenant.\n\nLa page sera inaccessible pendant quelques instants.");
+                    } else {
+                        alert("Erreur lors du redémarrage.");
+                    }
+                })
+                .catch(error => {
+                    alert("Erreur : " + error);
+                });
+        }
+    }
+    </script>
 </body>
 </html>

@@ -32,19 +32,49 @@ body {
   backdrop-filter: blur(10px);
 }
 
+/* Header avec bouton reboot */
 .header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
 }
 
-.logo {
-  font-size: 2rem;
+.header-text {
+    flex: 1;
 }
 
-.header-text h1 {
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+/* Bouton de redémarrage */
+.reboot-btn {
+    background: linear-gradient(135deg, #ff4b4b 0%, #c62828 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3);
+}
+
+.reboot-btn:hover {
+    background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 75, 75, 0.4);
+}
+
+.reboot-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 75, 75, 0.3);
+}
+
+.header-content h1 {
   font-size: 1.5rem;
   margin-bottom: 0.25rem;
   color: var(--text);
